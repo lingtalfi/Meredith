@@ -29,10 +29,6 @@ interface MainControllerInterface
      * @return ListHandlerInterface
      */
     public function getListHandler();
-    /**
-     * @return OnFormReadyInterface
-     */
-    public function getOnFormReady();
 
 
 }

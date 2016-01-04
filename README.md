@@ -34,6 +34,11 @@ History Log
 ------------------
 
     
+- 1.0.3 -- 2016-01-04
+
+    - clean MainController code
+    
+    
 - 1.0.0 -- 2016-01-04
 
     - initial commit

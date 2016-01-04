@@ -21,7 +21,6 @@ class MeredithMainController implements MainControllerInterface
     private $formHandler;
     private $listHandler;
     private $tableColumnsFactory;
-    private $onFormReady;
  
 
     public function __construct()
@@ -73,13 +72,6 @@ class MeredithMainController implements MainControllerInterface
         return $this->listHandler;
     }
 
-    /**
-     * @return OnFormReadyInterface
-     */
-    public function getOnFormReady()
-    {
-        return $this->onFormReady;
-    }
 
     public function getTableColumnsFactory()
     {
@@ -116,10 +108,4 @@ class MeredithMainController implements MainControllerInterface
         return $this;
     }
 
-
-    public function setOnFormReady(OnFormReadyInterface $onFormReady)
-    {
-        $this->onFormReady = $onFormReady;
-        return $this;
-    }
 }
