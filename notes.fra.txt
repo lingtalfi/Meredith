@@ -1,0 +1,46 @@
+
+
+
+Meredith
+    - git::/lingtalfi/Bat:1.23
+    - git::/lingtalfi/QuickPdo:1.4.0
+    - git::/lingtalfi/Tim:1.1.0
+    
+    
+Bat
+    CopyDir ***
+    Tiphaine *** 
+    
+    
+    
+    
+FormProcessorFactory:
+                    
+        Insère/Update les données dans la database,
+        puis renvoie un message de succès ou d'erreur à la sortie.
+        
+        Note: le processor est bien responsable de valider les données avant de les insérer/modifier
+        en bdd. La vérification inclue la question des droits: est-ce qu'un user qui update
+        la bdd a les droits de le faire.
+                     
+                                    
+        Dans mon implémentation, l'user fournit le callback qui permet de trouver le formProcessor correspondant à un formId.
+        Cela est un comportement lazy qui permet de n'appeler le formProcessor que lorsque l'on en a besoin, et sans avoir besoin
+        de passer par un service container (cheap).
+                                            
+
+        FormProcessor pour le développeur:
+                utiliser les méthodes setSuccessMsg et setErrorMsg pour communiquer des informations à destination
+                de l'utilisateur (celui qui poste le formulaire).
+                Si une exception n'est pas rattrapée, sa gestion dépasse le cadre de la discussion de meredith,
+                (normalement, le tim serveur qui englobe le FormProcessor rattrape l'exception et la log,
+                puis affiche un message bateau à la sortie afin de ne pas dévoiler des informations confidentielles).
+
+
+
+                    
+                    
+If you don't use an existing crud system and you want to create one from scratch,
+meredith can help you to do that by providing some useful tools which take care of some parts of the job for you.
+
+It has a client side part and a server side part...

@@ -1,0 +1,4 @@
+dependencies:
+    - git::/lingtalfi/Bat:1.23
+    - git::/lingtalfi/QuickPdo:1.4.0
+    - git::/lingtalfi/Tim:1.1.0

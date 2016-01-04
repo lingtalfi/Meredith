@@ -1,0 +1,222 @@
+(function ($) {
+    $(document).ready(function () {
+
+
+        // persisting rows selections 
+        var selected = [];
+
+
+        /**
+         * The registry can be used by the user to transmit data
+         */
+        window.meredithRegistry.buttons = [
+            meredithButtonsFactory.colvis("Columns Visibility"),
+            meredithButtonsFactory.deleteSelectedRows({
+                text: "Delete",
+                confirmText: "Are you sure you want to delete the selected rows (this action is irreversible)?",
+                confirmButtonTxt: "Okay",
+                cancelButtonTxt: "Cancel"
+            })
+        ];
+        /**
+         * void     callback (jForm, data)
+         *              data is a mapping (js array object) containing the form data (it comes from the db via ajax)
+         */
+        window.meredithRegistry.onModalOpenAfter = null;
+
+
+        window.meredithOnDrawAfter = function () {
+
+        };
+
+        // Table setup
+        // ------------------------------
+
+        // Setting datatable defaults
+        $.extend($.fn.dataTable.defaults, {
+            autoWidth: false,
+            dom: '<"datatable-header"fBl><"datatable-scroll"t><"datatable-footer"ip>',
+            buttons: meredithRegistry.buttons,
+            language: {
+                search: '<span>Filter:</span> _INPUT_',
+                lengthMenu: '<span>Show:</span> _MENU_',
+                paginate: {'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;'}
+            },
+            //scroller: true,
+            //scrollY: 500, // required, I don't know why
+            select: {
+                style: 'os', // you need to put this base property if you want to use info:false (didn't found it in the docs)
+                info: false
+            },
+            serverSide: true,
+            drawCallback: function () {
+                $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').addClass('dropup');
+                window.meredithOnDrawAfter();
+            },
+            preDrawCallback: function () {
+                $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').removeClass('dropup');
+            },
+            rowCallback: function (row, data) {
+
+                // uncomment this and in initComplete to have persistent selection 
+                //if ($.inArray(parseInt(data.DT_RowId), selected) !== -1) {
+                //    $(row).addClass('selected');
+                //}
+            },
+            initComplete: function (settings, json) {
+                // External table additions
+                // ------------------------------
+                // Add placeholder to the datatable filter option
+                $('.dataTables_filter input[type=search]').attr('placeholder', 'Type to filter...');
+
+
+            
+
+                // useful values
+                var table = $('.datatable-meredith').DataTable();
+                var jTable = $('.datatable-meredith').dataTable();
+                var jForm = $("#meredith_edit_modal").find("form");
+
+                //------------------------------------------------------------------------------/
+                // REMOVE ROW -- by clicking on row's remove button
+                //------------------------------------------------------------------------------/
+                $('#meredith_remove_modal')
+                    .on('show.bs.modal', function (e) {
+                        var jTarget = $(e.relatedTarget);
+                        var jRow = jTarget.closest("tr");
+                        var id = jRow.attr('id');
+
+                        $("#meredith_remove_row_confirm")
+                            .off()
+                            .on('click', function () {
+                                meredithFunctions.removeIds([id], table);
+                            })
+                        ;
+
+                    });
+
+
+                //------------------------------------------------------------------------------/
+                // EDIT ROW -- by clicking on row's edit button
+                //------------------------------------------------------------------------------/
+                $('#meredith_edit_modal')
+                    .on('show.bs.modal', function (e) {
+
+                        /**
+                         * reset the id/pk of the form being updated,
+                         * and other values too...
+                         */
+                        jForm.removeData('meredith.the_id');
+                        jForm.removeData('meredith.isSuccess');
+
+
+                        var jTarget = $(e.relatedTarget);
+                        var jRow = jTarget.closest("tr");
+                        var id = jRow.attr('id');
+
+                        var formId = $('.datatable-meredith').data("formId");
+                        var url = $('.datatable-meredith').data("fetch_row_url");
+
+
+                        timPost(url, {
+                            id: id,
+                            formId: formId
+                        }, function (info) {
+                            for (var key in info) {
+
+                                var jControl = jForm.find("[name=" + key + "]");
+
+                                // ignore fields like id
+                                if (jControl.length) {
+
+
+                                    /**
+                                     * I couldn't handle switchery checkboxes with just jquery.val()
+                                     * as said in the docs: http://api.jquery.com/val/#val-value,
+                                     * so here is my home made work around.
+                                     */
+                                    if (jControl.hasClass("switchery")) {
+                                        var isChecked = jControl[0].checked;
+                                        if ('1' === info[key]) {
+                                            if (false === isChecked) {
+                                                jControl.trigger('click');
+                                            }
+                                        }
+                                        else {
+                                            if (true === isChecked) {
+                                                jControl.trigger('click');
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        jControl.val(info[key]);
+                                    }
+                                }
+                            }
+                            var func = window.meredithRegistry.onModalOpenAfter;
+                            if (null !== func) {
+                                func(jForm, info);
+                            }
+
+                            // transmit the id or pk to the form, in a secure manner
+                            jForm.data('meredith.the_id', id);
+
+                            //table.row('.selected').remove().draw();
+                        }, function (msg) {
+                            meredithFunctions.modalWarning(msg);
+                        });
+
+                    })
+                    .on('hidden.bs.modal', function () {
+
+                        var isSuccess = jForm.data("meredith.isSuccess");
+                        if (true === isSuccess) {
+
+                            window.meredithOnDrawAfter = function () {
+                                var id = jForm.data("meredith.the_id");
+                                var jRow = jTable.find("tr[id=" + id + "]");
+                                jRow.addClass("highlight");
+                                jRow.stop().animate({
+                                    'opacity': '1'
+                                }, 500, function () {
+                                    jRow.removeClass("highlight");
+                                });
+                            };
+                            table.draw();
+                        }
+                    });
+
+
+                // uncomment this and in rowCallback to have persistent selection
+                //var table = $('.datatable-meredith').DataTable();
+                //table.on('select', function (e, dt, type, indexes) {
+                //    if (type === 'row') {
+                //        var ids = dt.rows({selected: true}).ids();
+                //        for (var i = 0; i < ids.length; i++) {
+                //            var id = parseInt(ids[i]);
+                //            var index = $.inArray(id, selected);
+                //            if (index === -1) {
+                //                selected.push(id);
+                //            }
+                //        }
+                //    }
+                //});
+                //table.on('deselect', function (e, dt, type, indexes) {
+                //    if (type === 'row') {
+                //        var jNotSelected = $('.datatable-meredith').find("tr").not(".selected");
+                //        var ids = dt.rows(jNotSelected).ids();
+                //        for (var i = 0; i < ids.length; i++) {
+                //            var id = parseInt(ids[i]);
+                //            var index = $.inArray(id, selected);
+                //            if (index !== -1) {
+                //                selected.splice(index, 1);
+                //            }
+                //        }
+                //    }
+                //});
+            }
+        });
+
+
+    });
+})(jQuery);
