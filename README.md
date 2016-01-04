@@ -34,6 +34,11 @@ History Log
 ------------------
 
     
+- 1.0.4 -- 2016-01-04
+
+    - fix BootstrapControlsRenderer.renderMonoStatusControl default value for switchery  
+    
+    
 - 1.0.3 -- 2016-01-04
 
     - clean MainController code

@@ -18,9 +18,11 @@ class BootstrapControlsRenderer extends ControlsRenderer
     {
         if ($c instanceof InputControlInterface) {
             return $this->renderInputControl($c);
-        } elseif ($c instanceof MonoStatusControlInterface) {
+        }
+        elseif ($c instanceof MonoStatusControlInterface) {
             return $this->renderMonoStatusControl($c);
-        } else {
+        }
+        else {
             $this->log(sprintf("Doesn't know how to render control of class %s", get_class($c)));
         }
         return '';
@@ -65,7 +67,7 @@ EEE;
         $label = $c->getLabel();
         $value = htmlspecialchars($c->getValue());
         $name = htmlspecialchars($c->getName());
-
+        $checked = (true === (bool)$value) ? 'checked="checked"' : '';
 
         return <<<EEE
 <!-- Switchery single -->
@@ -73,7 +75,7 @@ EEE;
     <div class="col-lg-9">
         <div class="checkbox checkbox-switchery switchery-xs">
             <label>
-                <input type="checkbox" name="$name" value="$value" class="switchery">
+                <input type="checkbox" name="$name" value="$value" class="switchery" $checked>
                 $label
             </label>
         </div>
