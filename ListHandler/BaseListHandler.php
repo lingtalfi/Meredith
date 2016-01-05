@@ -6,6 +6,7 @@ use Bat\CaseTool;
 use Meredith\ContentTransformer\ContentTransformerInterface;
 use Meredith\Exception\MeredithException;
 use Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
+use Meredith\MainController\MainControllerInterface;
 use Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
 
 /**
@@ -30,6 +31,10 @@ class BaseListHandler implements ListHandlerInterface
     private $columns;
     private $notOrderable;
     private $notSortable;
+    //
+    private $mainAlias;
+    private $name2cosmetic;
+    private $from;
 
     public function __construct()
     {
@@ -37,6 +42,7 @@ class BaseListHandler implements ListHandlerInterface
         $this->columns = [];
         $this->notOrderable = [];
         $this->notSearchable = [];
+        $this->name2cosmetic = [];
     }
 
     public static function create()
@@ -135,6 +141,56 @@ class BaseListHandler implements ListHandlerInterface
         return $this->onModalOpenAfter;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getMainAlias()
+    {
+        return $this->mainAlias;
+    }
+
+    /**
+     * Return the cosmetic fields aware from clause
+     *
+     * @param MainControllerInterface $mc
+     * @return string
+     */
+    public function getFrom(MainControllerInterface $mc)
+    {
+        if (null !== $this->from) {
+            return $this->from;
+        }
+        return $mc->getFormId();
+    }
+
+    /**
+     * @return array of fields to use in the sql request:
+     *              those fields are aware of aliases.
+     *              Unchanged fields are returned with the alias prefix,
+     *              and cosmetic fields are returned as is
+     */
+    public function getRequestFields()
+    {
+        $ret = [];
+        $prefix = '';
+        if (null !== $this->mainAlias) {
+            $prefix = $this->mainAlias . ".";
+        }
+        foreach ($this->columns as $info) {
+            if (true === $info[1]) {
+                if (array_key_exists($info[0], $this->name2cosmetic)) {
+                    $ret[] = $this->name2cosmetic[$info[0]];
+                }
+                else {
+                    $ret[] = $prefix . $info[0];
+                }
+            }
+        }
+        return $ret;
+    }
+
+
+
 
     //------------------------------------------------------------------------------/
     //
@@ -174,6 +230,25 @@ class BaseListHandler implements ListHandlerInterface
     public function setNotSortable(array $notSortable)
     {
         $this->notSearchable = $notSortable;
+        return $this;
+    }
+
+    public function setMainAlias($mainAlias)
+    {
+        $this->mainAlias = $mainAlias;
+        return $this;
+    }
+
+    public function setFrom($from)
+    {
+        $this->from = $from;
+        return $this;
+    }
+
+
+    public function addCosmeticChange($columnName, $cosmeticValue)
+    {
+        $this->name2cosmetic[$columnName] = $cosmeticValue;
         return $this;
     }
 

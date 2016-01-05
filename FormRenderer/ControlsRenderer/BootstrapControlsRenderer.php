@@ -6,6 +6,7 @@ use Meredith\FormRenderer\ControlsRenderer\Control\Bootstrap\InputControl;
 use Meredith\FormRenderer\ControlsRenderer\Control\ControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\InputControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\MonoStatusControlInterface;
+use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectControlInterface;
 
 /**
  * LingTalfi 2015-12-31
@@ -21,6 +22,9 @@ class BootstrapControlsRenderer extends ControlsRenderer
         }
         elseif ($c instanceof MonoStatusControlInterface) {
             return $this->renderMonoStatusControl($c);
+        }
+        elseif ($c instanceof SingleSelectControlInterface) {
+            return $this->renderSingleSelectStatusControl($c);
         }
         else {
             $this->log(sprintf("Doesn't know how to render control of class %s", get_class($c)));
@@ -70,7 +74,7 @@ EEE;
         $checked = (true === (bool)$value) ? 'checked="checked"' : '';
 
         return <<<EEE
-<!-- Switchery single -->
+<!-- switchery single -->
 <div class="form-group">
     <div class="col-lg-9">
         <div class="checkbox checkbox-switchery switchery-xs">
@@ -83,6 +87,38 @@ EEE;
 </div>
 <!-- /switchery single -->
 EEE;
+
+    }
+
+    private function renderSingleSelectStatusControl(SingleSelectControlInterface $c)
+    {
+        $label = $c->getLabel();
+        $value = $c->getValue();
+        $name = htmlspecialchars($c->getName());
+        $v2l = $c->getValues2Labels();
+
+
+        $s = '';
+        $s .= <<<EEE
+<!-- single select -->
+<div class="form-group">
+    <label class="control-label col-lg-2">$label</label>
+    <div class="col-lg-10">
+        <select class="form-control" name="$name">
+EEE;
+
+        foreach ($v2l as $v => $l) {
+            $sSel = ($v === $value) ? ' selected="selected"' : '';
+            $val = htmlspecialchars($v);
+            $s .= "<option" . $sSel . " value=\"$val\">$l</option>";
+        }
+        $s .= <<<EEE
+        </select>
+    </div>
+</div>
+<!-- /single select -->
+EEE;
+        return $s;
 
     }
 }

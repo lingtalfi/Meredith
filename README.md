@@ -34,6 +34,12 @@ History Log
 ------------------
 
     
+- 2.1.0 -- 2016-01-05
+
+    - add SingleSelectControlInterface  
+    - add handling for foreign key in insert/update service  
+
+    
 - 2.0.0 -- 2016-01-05
 
     - introducing ListPreConfigScript  

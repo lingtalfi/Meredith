@@ -5,6 +5,7 @@ namespace Meredith\ListHandler;
 use Meredith\ContentTransformer\ContentTransformerInterface;
 use Meredith\ListButtonCode\ListButtonCodeInterface;
 use Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
+use Meredith\MainController\MainControllerInterface;
 use Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
 use Meredith\TableStyleRenderer\TableStyleRendererInterface;
 
@@ -19,6 +20,7 @@ interface ListHandlerInterface
     public function getColumnNames2Types();
 
     public function getColumns();
+
 
     public function getOrderableColumns();
 
@@ -49,4 +51,30 @@ interface ListHandlerInterface
      * @return ListPreConfigScriptInterface
      */
     public function getPreConfigScript();
+
+
+    //------------------------------------------------------------------------------/
+    // ADD COSMETIC RELATED METHODS
+    //------------------------------------------------------------------------------/
+    /**
+     * @return string|null
+     */
+    public function getMainAlias();
+
+    /**
+     * Return the cosmetic fields aware from clause
+     *
+     * @param MainControllerInterface $mc
+     * @return string
+     */
+    public function getFrom(MainControllerInterface $mc);
+
+    /**
+     * @return array of fields to use in the sql request:
+     *              those fields are aware of aliases.
+     *              Unchanged fields are returned with the alias prefix,
+     *              and cosmetic fields are returned as is
+     */
+    public function getRequestFields();
+
 }
