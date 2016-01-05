@@ -34,6 +34,12 @@ History Log
 ------------------
 
     
+- 2.0.0 -- 2016-01-05
+
+    - introducing ListPreConfigScript  
+    - moved header buttons from ListHandler to ListPreConfigScript  
+    
+    
 - 1.0.4 -- 2016-01-04
 
     - fix BootstrapControlsRenderer.renderMonoStatusControl default value for switchery  

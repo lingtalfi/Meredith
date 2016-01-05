@@ -17,10 +17,7 @@ class ColvisListButtonCode extends ListButtonCode
     {
         $escaped = $this->escape($this->text);
         return <<<EEE
-{
-    extend: "colvis",
-    text: "$escaped"
-}
+meredithButtonsFactory.colvis("$escaped")
 EEE;
 
     }

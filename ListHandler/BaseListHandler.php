@@ -5,9 +5,8 @@ namespace Meredith\ListHandler;
 use Bat\CaseTool;
 use Meredith\ContentTransformer\ContentTransformerInterface;
 use Meredith\Exception\MeredithException;
-use Meredith\ListButtonCode\ListButtonCodeInterface;
+use Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
 use Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
-use Meredith\TableStyleRenderer\TableStyleRendererInterface;
 
 /**
  * LingTalfi 2015-12-28
@@ -15,8 +14,8 @@ use Meredith\TableStyleRenderer\TableStyleRendererInterface;
 class BaseListHandler implements ListHandlerInterface
 {
     private $contentTransformers;
-    private $headerButtons;
     private $onModalOpenAfter;
+    private $preConfig;
 
     /**
      * @var array of column
@@ -34,7 +33,6 @@ class BaseListHandler implements ListHandlerInterface
 
     public function __construct()
     {
-        $this->headerButtons = [];
         $this->contentTransformers = [];
         $this->columns = [];
         $this->notOrderable = [];
@@ -100,6 +98,15 @@ class BaseListHandler implements ListHandlerInterface
         return $ret;
     }
 
+    /**
+     * @return ListPreConfigScriptInterface
+     */
+    public function getPreConfigScript()
+    {
+        return $this->preConfig;
+    }
+
+
     public function getSearchableColumns()
     {
         $ret = [];
@@ -119,14 +126,6 @@ class BaseListHandler implements ListHandlerInterface
         return $this->contentTransformers;
     }
 
-    
-    /**
-     * @return ListButtonCodeInterface[]
-     */
-    public function getHeaderButtons()
-    {
-        return $this->headerButtons;
-    }
 
     /**
      * @return OnModalOpenAfterInterface
@@ -140,12 +139,6 @@ class BaseListHandler implements ListHandlerInterface
     //------------------------------------------------------------------------------/
     //
     //------------------------------------------------------------------------------/
-    public function addHeaderButtons(ListButtonCodeInterface $headerButton)
-    {
-        $this->headerButtons[] = $headerButton;
-        return $this;
-    }
-
     /*
      * target: int|string, position or name of the column
      */
@@ -164,6 +157,13 @@ class BaseListHandler implements ListHandlerInterface
         $this->onModalOpenAfter = $onModalOpenAfter;
         return $this;
     }
+
+    public function setPreConfigScript(ListPreConfigScriptInterface $preConfig)
+    {
+        $this->preConfig = $preConfig;
+        return $this;
+    }
+
 
     public function setNotOrderable(array $notOrderable)
     {

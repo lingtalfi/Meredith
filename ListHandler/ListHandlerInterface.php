@@ -4,6 +4,7 @@ namespace Meredith\ListHandler;
 
 use Meredith\ContentTransformer\ContentTransformerInterface;
 use Meredith\ListButtonCode\ListButtonCodeInterface;
+use Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
 use Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
 use Meredith\TableStyleRenderer\TableStyleRendererInterface;
 
@@ -40,12 +41,12 @@ interface ListHandlerInterface
     public function getContentTransformers();
 
     /**
-     * @return ListButtonCodeInterface[]
-     */
-    public function getHeaderButtons();
-
-    /**
      * @return OnModalOpenAfterInterface
      */
     public function getOnModalOpenAfter();
+
+    /**
+     * @return ListPreConfigScriptInterface
+     */
+    public function getPreConfigScript();
 }

@@ -33,37 +33,12 @@ class DeleteSelectedRowsListButtonCode extends ListButtonCode
         $cancelBtnText = $this->escape($this->cancelBtnText);
 
         return <<<EEE
-{
+meredithButtonsFactory.deleteSelectedRows({
     text: "$text",
-    action: function (e, dt, node, config) {
-
-        var idObjects = dt.rows({selected: true}).ids();
-        if( idObjects.length ){
-            var ids = [];
-            for (var i = 0; i < idObjects.length; i++) {
-                ids.push(idObjects[i]);
-            }
-
-            bootbox.confirm({
-                    message: "$confirmText",
-                    callback: function (result) {
-                        if (true === result) {
-                            meredithFunctions.removeIds(ids, dt);
-                        }
-                    },
-                    buttons: {
-                        confirm: {
-                            label: "$confirmBtnText"
-                        },
-                        cancel: {
-                            label: "$cancelBtnText"
-                        }
-                    }
-                }
-            );
-        }
-    }
-}
+    confirmText: "$confirmText",
+    confirmButtonTxt: "$confirmBtnText",
+    cancelButtonTxt: "$cancelBtnText"
+})
 EEE;
 
     }

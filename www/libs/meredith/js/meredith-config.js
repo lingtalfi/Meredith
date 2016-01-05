@@ -7,17 +7,20 @@
 
 
         /**
+         * Assuming that (wass0) /libs/meredith/js/meredith.js is loaded first
          * The registry can be used by the user to transmit data
          */
-        window.meredithRegistry.buttons = [
-            meredithButtonsFactory.colvis("Columns Visibility"),
-            meredithButtonsFactory.deleteSelectedRows({
-                text: "Delete",
-                confirmText: "Are you sure you want to delete the selected rows (this action is irreversible)?",
-                confirmButtonTxt: "Okay",
-                cancelButtonTxt: "Cancel"
-            })
-        ];
+        if (null === window.meredithRegistry.buttons) {
+            window.meredithRegistry.buttons = [
+                //meredithButtonsFactory.colvis("Columns Visibility"),
+                //meredithButtonsFactory.deleteSelectedRows({
+                //    text: "Delete",
+                //    confirmText: "Are you sure you want to delete the selected rows (this action is irreversible)?",
+                //    confirmButtonTxt: "Okay",
+                //    cancelButtonTxt: "Cancel"
+                //})
+            ];
+        }
         /**
          * void     callback (jForm, data)
          *              data is a mapping (js array object) containing the form data (it comes from the db via ajax)
@@ -69,8 +72,6 @@
                 // Add placeholder to the datatable filter option
                 $('.dataTables_filter input[type=search]').attr('placeholder', 'Type to filter...');
 
-
-            
 
                 // useful values
                 var table = $('.datatable-meredith').DataTable();
