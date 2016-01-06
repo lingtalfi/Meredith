@@ -34,6 +34,13 @@ History Log
 ------------------
 
     
+- 2.2.0 -- 2016-01-05
+
+    - add ListHandlerInterface.setWhere 
+    - fix bug in (wass0) /libs/meredith/service/datatables_server_side_processor.php 
+    - add Data2ButtonContentTransformer
+        
+    
 - 2.1.0 -- 2016-01-05
 
     - add SingleSelectControlInterface  

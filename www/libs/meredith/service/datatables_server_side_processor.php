@@ -46,16 +46,20 @@ if (isset($_GET['table'])) {
 
 
                     // getMainController either works as expected, or throws an Exception in your face ...
+                    MeredithSupervisor::inst()->setFormId($formId);
                     $mc = MeredithSupervisor::inst()->getMainController($formId);
 
 
-                    // ... therefore the following statement is considered safe
-                    $table = $formId;
+                    $lh = $mc->getListHandler();
 
-                    $columns = $mc->getListHandler()->getColumns();
-                    $orderableCols = $mc->getListHandler()->getOrderableColumns();
-                    $searchableCols = $mc->getListHandler()->getSearchableColumns();
-                    $columns = $mc->getListHandler()->getColumns();
+                    $mainAlias = $lh->getMainAlias();
+                    $aliasPrefix = (null !== $mainAlias) ? $mainAlias . '.' : '';
+
+
+                    $columns = $lh->getColumns();
+                    $orderableCols = $lh->getOrderableColumns();
+                    $searchableCols = $lh->getSearchableColumns();
+                    $columns = $lh->getColumns();
                     $orderable = [];
                     foreach ($columns as $col) {
                         if (in_array($col, $orderableCols, true)) {
@@ -87,26 +91,48 @@ if (isset($_GET['table'])) {
 //                $arr['columns'][$i]['search']['regex'];
 //            }
 
+
+                    //------------------------------------------------------------------------------/
+                    // CUSTOM WHERE
+                    //------------------------------------------------------------------------------/
+                    $customWhere = $lh->getWhere();
+
+
                     //------------------------------------------------------------------------------/
                     // SEARCH - MODULE
                     //------------------------------------------------------------------------------/
-                    $sSearch = "";
+                    $searchFrags = [];
                     $markers = [];
                     if ('' !== $searchValue) {
                         $c = 0;
+                        $markers['value'] = '%' . str_replace('%', '\%', $searchValue) . '%';
                         foreach ($searchable as $index => $isSearchable) {
                             if (true === $isSearchable) {
-                                if ('' === $sSearch) {
-                                    $sSearch = " where";
-                                }
-                                if (0 !== $c) {
-                                    $sSearch .= " or";
-                                }
                                 $colName = $columns[$index];
-                                $sSearch .= " " . $colName . " like :$colName";
-                                $markers[$colName] = '%' . str_replace('%', '\%', $searchValue) . '%';
-                                $c++;
+                                $searchFrags[] = " " . $aliasPrefix . $colName . " like :value";
                             }
+                        }
+                    }
+
+
+                    //------------------------------------------------------------------------------/
+                    // COMPILE WHERE STRING
+                    //------------------------------------------------------------------------------/
+                    $sWhere = '';
+                    if (null !== $customWhere) {
+                        $sWhere .= ' where (';
+                        $sWhere .= $customWhere;
+                        $sWhere .= ' )';
+                    }
+                    if ($searchFrags) {
+                        if ('' === $sWhere) {
+                            $sWhere .= " where ";
+                            $sWhere .= implode(' or ', $searchFrags);
+                        }
+                        else {
+                            $sWhere .= " and ( ";
+                            $sWhere .= implode(' or ', $searchFrags);
+                            $sWhere .= " )";
                         }
                     }
 
@@ -135,7 +161,7 @@ if (isset($_GET['table'])) {
                                                 $sOrder .= ",";
                                             }
                                             $colName = $columns[$colNum];
-                                            $sOrder .= " " . $colName . " " . $info['dir'];
+                                            $sOrder .= " " . $aliasPrefix . $colName . " " . $info['dir'];
                                             $c++;
                                         }
                                     }
@@ -148,12 +174,18 @@ if (isset($_GET['table'])) {
                     //------------------------------------------------------------------------------/
                     // REQUEST COMPUTING
                     //------------------------------------------------------------------------------/
-                    if (false !== $info = QuickPdo::fetch("select count(*) as count from $table")) {
+                    $fromClause = $lh->getFrom($mc);
+
+
+                    if (false !== $info = QuickPdo::fetch("select count(*) as count from $fromClause")) {
                         $ret['recordsTotal'] = (int)$info['count'];
                         $ret['recordsFiltered'] = $ret['recordsTotal'];
 
-                        $stmt .= "select * from $table";
-                        $stmt .= $sSearch;
+
+                        $requestFields = $lh->getRequestFields();
+
+                        $stmt .= "select " . implode(', ', $requestFields) . " from $fromClause";
+                        $stmt .= $sWhere;
 
 
                         $stmt .= $sOrder;
@@ -168,8 +200,8 @@ if (isset($_GET['table'])) {
                         }
 
                         // recordFiltered
-                        $stmtCountFiltered = "select count(*) as count from $table";
-                        $stmtCountFiltered .= $sSearch;
+                        $stmtCountFiltered = "select count(*) as count from $fromClause";
+                        $stmtCountFiltered .= $sWhere;
                         if (false !== $info = QuickPdo::fetch($stmtCountFiltered, $markers)) {
                             $ret['recordsFiltered'] = (int)$info['count'];
                         }

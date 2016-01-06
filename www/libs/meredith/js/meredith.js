@@ -171,17 +171,17 @@
                     "targets": opts.target,
                     "data": null,
                     "defaultContent": '<ul class="icons-list">'
-                        + '<li class="dropdown">'
-                        + '<a data-toggle="dropdown" class="dropdown-toggle" href="#">'
-                        + '<i class="icon-menu9"></i>'
-                        + '</a>'
-                        + '<ul class="dropdown-menu dropdown-menu-right">'
-                        + '<li><a data-target="#meredith_edit_modal" data-toggle="modal" href="#">'
-                        + '<i class="icon-pencil7"></i> ' + opts.updateText + '</a></li>'
-                        + '<li><a data-target="#meredith_remove_modal" data-toggle="modal" href="#">'
-                        + '<i class="icon-trash"></i> ' + opts.deleteText + '</a></li>'
-                        + '</ul></li>'
-                        + '</ul>'
+                    + '<li class="dropdown">'
+                    + '<a data-toggle="dropdown" class="dropdown-toggle" href="#">'
+                    + '<i class="icon-menu9"></i>'
+                    + '</a>'
+                    + '<ul class="dropdown-menu dropdown-menu-right">'
+                    + '<li><a data-target="#meredith_edit_modal" data-toggle="modal" href="#">'
+                    + '<i class="icon-pencil7"></i> ' + opts.updateText + '</a></li>'
+                    + '<li><a data-target="#meredith_remove_modal" data-toggle="modal" href="#">'
+                    + '<i class="icon-trash"></i> ' + opts.deleteText + '</a></li>'
+                    + '</ul></li>'
+                    + '</ul>'
                 };
             },
             activeButton: function (target, options) {
@@ -197,6 +197,31 @@
                             return '<span class="label label-success">' + opts.activeText + '</span>';
                         }
                         return '<span class="label label-danger">' + opts.inactiveText + '</span>';
+                    }
+                };
+            },
+            data2ButtonMap: function (target, options) {
+                var opts = $.extend({
+                    /**
+                     * array of data => [ span class, text ]
+                     */
+                    textMap: {},
+                    // array|null, the [ span class, text ] array
+                    defaultInfo: null
+                }, options);
+                return {
+                    targets: target,
+                    render: function (data, type, full, meta) {
+                        var info;
+                        if (data in opts.textMap) {
+                            info = opts.textMap[data];
+                            return '<span class="' + info[0] + '">' + info[1] + '</span>';
+                        }
+                        else if (null !== opts.defaultInfo) {
+                            info = opts.defaultInfo;
+                            return '<span class="' + info[0] + '">' + info[1] + '</span>';
+                        }
+                        return data;
                     }
                 };
             }

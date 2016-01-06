@@ -11,15 +11,7 @@
          * The registry can be used by the user to transmit data
          */
         if (null === window.meredithRegistry.buttons) {
-            window.meredithRegistry.buttons = [
-                //meredithButtonsFactory.colvis("Columns Visibility"),
-                //meredithButtonsFactory.deleteSelectedRows({
-                //    text: "Delete",
-                //    confirmText: "Are you sure you want to delete the selected rows (this action is irreversible)?",
-                //    confirmButtonTxt: "Okay",
-                //    cancelButtonTxt: "Cancel"
-                //})
-            ];
+            window.meredithRegistry.buttons = [];
         }
         /**
          * void     callback (jForm, data)

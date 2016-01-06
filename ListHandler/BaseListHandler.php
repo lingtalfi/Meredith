@@ -35,6 +35,7 @@ class BaseListHandler implements ListHandlerInterface
     private $mainAlias;
     private $name2cosmetic;
     private $from;
+    private $where;
 
     public function __construct()
     {
@@ -189,6 +190,15 @@ class BaseListHandler implements ListHandlerInterface
         return $ret;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+
+
 
 
 
@@ -251,6 +261,14 @@ class BaseListHandler implements ListHandlerInterface
         $this->name2cosmetic[$columnName] = $cosmeticValue;
         return $this;
     }
+
+    public function setWhere($where)
+    {
+        $this->where = $where;
+        return $this;
+    }
+    
+
 
 
 

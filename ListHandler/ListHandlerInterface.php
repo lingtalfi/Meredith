@@ -77,4 +77,13 @@ interface ListHandlerInterface
      */
     public function getRequestFields();
 
+
+    //------------------------------------------------------------------------------/
+    // ADD REQUEST CUSTOMIZATION METHODS 
+    //------------------------------------------------------------------------------/
+    /**
+     * @return string|null
+     */
+    public function getWhere();
+    
 }
