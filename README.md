@@ -33,18 +33,15 @@ Dependencies
 History Log
 ------------------
 
-    
-- 2.2.0 -- 2016-01-05
+        
+- 2.2.0 -- 2016-01-13
 
     - add ListHandlerInterface.setWhere 
     - fix bug in (wass0) /libs/meredith/service/datatables_server_side_processor.php 
     - add Data2ButtonContentTransformer
-        
-    
-- 2.1.0 -- 2016-01-05
-
     - add SingleSelectControlInterface  
     - add handling for foreign key in insert/update service  
+    - fix bug in /libs/meredith/service/insert_update_row.php 
 
     
 - 2.0.0 -- 2016-01-05
