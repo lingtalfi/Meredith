@@ -1,205 +1,124 @@
 <?php
 
+
 require_once __DIR__ . "/../../../../init.php";
 
 
+use Bat\ArrayTool;
 use Meredith\Exception\MeredithException;
 use Meredith\Supervisor\MeredithSupervisor;
 use QuickPdo\QuickPdo;
+use Tim\TimServer\OpaqueTimServer;
+use Tim\TimServer\TimServerInterface;
 
 
-if (isset($_GET['table'])) {
+OpaqueTimServer::create()
+    ->start(function (TimServerInterface $server) {
 
-    $formId = $_GET['table'];
+        if (isset($_POST['formId'])) {
+            $formId = (string)$_POST['formId'];
 
-    if (true === MeredithSupervisor::inst()->isGranted($formId, 'fetch')) {
+            //------------------------------------------------------------------------------/
+            // allow manual override
+            //------------------------------------------------------------------------------/
+            if (false !== $processor = MeredithSupervisor::inst()->getFormProcessor($formId)) {
 
+                $processor->process($_POST);
+                if (null !== $msg = $processor->getSuccessMsg()) {
+                    $server->success([
+                        'msg' => $msg,
+                    ]);
+                }
+                else {
+                    $server->error($processor->getErrorMsg());
+                }
+            }
+            //------------------------------------------------------------------------------/
+            // automated workflow
+            //------------------------------------------------------------------------------/
+            else {
 
-        $ret = [];
-        $arr = $_POST;
-        if (
-            isset($arr['draw']) &&
-            isset($arr['start']) &&
-            isset($arr['length']) &&
-            isset($arr['search'])
-        ) {
-
-            try {
-
-                $stmt = "";
-
-
-                $ret['draw'] = (int)$arr["draw"];
-                $start = (int)$arr["start"];
-                $length = (int)$arr["length"];
-                $search = $arr["search"];
-
-
-                if (
-                    is_array($search) &&
-                    array_key_exists("value", $search) &&
-                    array_key_exists("regex", $search)
-                ) {
+                $table = $formId; // should also handle when you need to update multiple tables
+                $arr = $_POST; // maybe add an obfuscating layer here (if you are paranoid...)
 
 
-                    $searchValue = $search['value']; // I will not be using regex in this script
+                $mc = MeredithSupervisor::inst()->getMainController($formId);
+                $defaultValues = $mc->getFormDataProcessor()->getDefaultValues();
+                $arr = array_replace($defaultValues, $arr);
+
+                $idf = $mc->getFormDataProcessor()->getIdentfyingFields();
 
 
-                    // getMainController either works as expected, or throws an Exception in your face ...
-                    $mc = MeredithSupervisor::inst()->getMainController($formId);
+                $nac = $mc->getFormDataProcessor()->getNonAutoIncrementedFields();
+                $nac2Values = array_intersect_key($arr, array_flip($nac));
 
 
+                try {
+                    $mode = 'insert';
+                    if (false === ($missing = ArrayTool::getMissingKeys($arr, $idf))) {
+                        $mode = 'update';
 
-                    $lh = $mc->getListHandler();
+                        // update
+                        if (true === MeredithSupervisor::inst()->isGranted($formId, 'update')) {
 
-                    $mainAlias = $lh->getMainAlias();
-                    $aliasPrefix = (null !== $mainAlias) ? $mainAlias . '.' : '';
+                            $idf2Values = array_intersect_key($arr, array_flip($idf));
+                            $where = [];
+                            foreach ($idf2Values as $k => $v) {
+                                $where[] = [$k, '=', $v];
+                            }
 
-
-                    $columns = $lh->getColumns();
-                    $orderableCols = $lh->getOrderableColumns();
-                    $searchableCols = $lh->getSearchableColumns();
-                    $columns = $lh->getColumns();
-                    $orderable = [];
-                    foreach ($columns as $col) {
-                        if (in_array($col, $orderableCols, true)) {
-                            $orderable[] = true;
+                            if (true === QuickPdo::update($table, $nac2Values, $where)) {
+                                $msg = $mc->getFormDataProcessor()->getSuccessMessage($formId, 'update');
+                                if (false === $msg) {
+                                    $msg = MeredithSupervisor::inst()->translate("The record has been successfully updated");
+                                }
+                                $server->success([
+                                    'msg' => $msg,
+                                ]);
+                            }
+                            else {
+                                $server->error(MeredithSupervisor::inst()->translate("An error occurred with the database, please retry later"));
+                            }
                         }
                         else {
-                            $orderable[] = false;
+                            throw new MeredithException("Permission not granted to update with $formId");
                         }
                     }
-                    $searchable = [];
-                    foreach ($columns as $col) {
-                        if (in_array($col, $searchableCols, true)) {
-                            $searchable[] = true;
+                    else {
+                        // insert
+                        if (true === MeredithSupervisor::inst()->isGranted($formId, 'insert')) {
+                            if (false !== $id = QuickPdo::insert($table, $nac2Values)) {
+                                $msg = $mc->getFormDataProcessor()->getSuccessMessage($formId, 'insert');
+                                if (false === $msg) {
+                                    $msg = MeredithSupervisor::inst()->translate("The record has been successfully recorded");
+                                }
+                                $server->success([
+                                    'msg' => $msg,
+                                ]);
+                            }
+                            else {
+                                $server->error(MeredithSupervisor::inst()->translate("An error occurred with the database, please retry later"));
+                            }
                         }
                         else {
-                            $searchable[] = false;
+                            throw new MeredithException("Permission not granted to insert with $formId");
                         }
                     }
-                    $nbColumns = count($columns);
-
-
-                    // I'm not using those (I prefer to manage those settings server side)
-//            for ($i = 0; $i < $nbColumns; $i++) {
-//                $arr['columns'][$i]['data'];
-//                $arr['columns'][$i]['name'];
-//                $arr['columns'][$i]['searchable'];
-//                $arr['columns'][$i]['orderable'];
-//                $arr['columns'][$i]['search']['value'];
-//                $arr['columns'][$i]['search']['regex'];
-//            }
-
-                    //------------------------------------------------------------------------------/
-                    // SEARCH - MODULE
-                    //------------------------------------------------------------------------------/
-                    $sSearch = "";
-                    $markers = [];
-                    if ('' !== $searchValue) {
-                        $c = 0;
-                        $markers['value'] = '%' . str_replace('%', '\%', $searchValue) . '%';
-                        foreach ($searchable as $index => $isSearchable) {
-                            if (true === $isSearchable) {
-                                if ('' === $sSearch) {
-                                    $sSearch = " where";
-                                }
-                                if (0 !== $c) {
-                                    $sSearch .= " or";
-                                }
-                                $colName = $columns[$index];
-                                $sSearch .= " " . $aliasPrefix . $colName . " like :value";
-                                $c++;
-                            }
+                } catch (\PDOException $e) {
+                    if ('23000' === $e->getCode()) { // integrity constraint violation 
+                        $msg = $mc->getFormDataProcessor()->getDuplicateEntryMessage($formId, $mode);
+                        if (false === $msg) {
+                            $msg = "A similar item already exists in the database";
                         }
+                        $server->error($msg);
                     }
-
-
-                    //------------------------------------------------------------------------------/
-                    // ORDER BY - MODULE
-                    //------------------------------------------------------------------------------/
-                    $sOrder = "";
-                    if (isset($arr['order']) && is_array($arr['order'])) {
-                        if ($arr['order']) {
-                            $c = 0;
-                            $sOrder .= " order by";
-                            foreach ($arr['order'] as $colNum => $info) {
-                                if (
-                                    is_array($info) &&
-                                    array_key_exists('column', $info) &&
-                                    array_key_exists('dir', $info)
-                                ) {
-                                    $isOrderable = (array_key_exists($colNum, $orderable) && true === $orderable[$colNum]);
-                                    if (true === $isOrderable) {
-                                        if (
-                                            $colNum <= $nbColumns && $colNum >= 0 &&
-                                            ('asc' === $info['dir'] || 'desc' === $info['dir'])
-                                        ) {
-                                            if ($c !== 0) {
-                                                $sOrder .= ",";
-                                            }
-                                            $colName = $columns[$colNum];
-                                            $sOrder .= " " . $aliasPrefix . $colName . " " . $info['dir'];
-                                            $c++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    //------------------------------------------------------------------------------/
-                    // REQUEST COMPUTING
-                    //------------------------------------------------------------------------------/
-                    $fromClause = $lh->getFrom($mc);
-
-
-                    if (false !== $info = QuickPdo::fetch("select count(*) as count from $fromClause")) {
-                        $ret['recordsTotal'] = (int)$info['count'];
-                        $ret['recordsFiltered'] = $ret['recordsTotal'];
-
-
-                        $requestFields = $lh->getRequestFields();
-
-                        $stmt .= "select " . implode(', ', $requestFields) . " from $fromClause";
-                        $stmt .= $sSearch;
-
-
-                        $stmt .= $sOrder;
-                        $stmt .= " limit $start, $length";
-
-                        if (false !== $res = QuickPdo::fetchAll($stmt, $markers)) {
-                            $ret['data'] = [];
-                            foreach ($res as $k => $row) {
-                                $row = ['DT_RowId' => $row['id']] + $row;
-                                $ret['data'][$k] = $row;
-                            }
-                        }
-
-                        // recordFiltered
-                        $stmtCountFiltered = "select count(*) as count from $fromClause";
-                        $stmtCountFiltered .= $sSearch;
-                        if (false !== $info = QuickPdo::fetch($stmtCountFiltered, $markers)) {
-                            $ret['recordsFiltered'] = (int)$info['count'];
-                        }
+                    else {
+                        throw $e;
                     }
                 }
-
-
-            } catch (\Exception $e) {
-                $ret['error'] = MeredithSupervisor::inst()->translate("Oops! An error occurred, please retry later");
-                MeredithSupervisor::inst()->log("Oops! An error occurred, please retry later: $stmt -- " . $e->getMessage());
             }
         }
-
-    }
-    else {
-        throw new MeredithException("Permission not granted to access rows with $formId");
-    }
-}
-else {
-    throw new \Exception("An error occurred"); // but we don't care
-}
-
-echo json_encode($ret);
+        else {
+            $server->error(MeredithSupervisor::inst()->translate("Invalid data: undefined formId"));
+        }
+    })->output();
