@@ -34,6 +34,13 @@ History Log
 ------------------
 
         
+- 2.4.0 -- 2016-01-15
+
+    - insert_update_row.php: can now define the table from the meredith workflow
+    - insert_update_row.php: add handling of default error message
+    - insert_update_row.php: logging pdo exceptions
+    
+    
 - 2.3.0 -- 2016-01-15
 
     - add ColisControl

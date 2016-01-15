@@ -78,7 +78,7 @@ class MeredithSupervisor
      * - fetchRow
      * - insertUpdate
      * - delete
-     * 
+     *
      * @return string
      */
     public function getUrl($type)
@@ -132,10 +132,14 @@ class MeredithSupervisor
     }
 
 
+    /**
+     * @param mixed $msg
+     * @return void
+     */
     public function log($msg)
     {
         if (null !== $this->logCb) {
-            return call_user_func($this->logCb, $msg);
+            call_user_func($this->logCb, $msg);
         }
     }
 

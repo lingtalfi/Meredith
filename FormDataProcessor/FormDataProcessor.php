@@ -17,8 +17,10 @@ class FormDataProcessor implements FormDataProcessorInterface
      */
     private $fields;
     private $getSuccessMsgCb;
+    private $getDefaultErrorMsgCb;
     private $getDuplicateEntryMsgCb;
     private $extensions;
+    private $table;
 
     public function __construct()
     {
@@ -102,6 +104,18 @@ class FormDataProcessor implements FormDataProcessorInterface
         }
         return false;
     }
+    /**
+     * @param $formId
+     * @param string $type (insert|update)
+     * @return string|false
+     */
+    public function getDefaultErrorMessage($formId, $type)
+    {
+        if (null !== $this->getSuccessMsgCb) {
+            return call_user_func($this->getSuccessMsgCb, $formId, $type);
+        }
+        return false;
+    }
 
     /**
      * @param $formId
@@ -128,6 +142,10 @@ class FormDataProcessor implements FormDataProcessorInterface
         return false;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
 
 
     //------------------------------------------------------------------------------/
@@ -144,6 +162,18 @@ class FormDataProcessor implements FormDataProcessorInterface
         $this->getSuccessMsgCb = $getSuccessMsgCb;
         return $this;
     }
+    
+    public function setGetDefaultErrorMsgCb(callable $cb)
+    {
+        $this->getDefaultErrorMsgCb = $cb;
+        return $this;
+    }
 
+    public function setTable($table)
+    {
+        $this->table = $table;
+        return $this;
+    }
 
+    
 }

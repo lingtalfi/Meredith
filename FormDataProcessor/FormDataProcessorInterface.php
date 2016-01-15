@@ -5,7 +5,6 @@ namespace Meredith\FormDataProcessor;
 /*
  * LingTalfi 2016-01-02
  */
-use Meredith\FormDataProcessor\Extension\FormDataProcessorExtensionInterface;
 
 interface FormDataProcessorInterface
 {
@@ -42,6 +41,13 @@ interface FormDataProcessorInterface
 
     /**
      * @param $formId
+     * @param $type (insert|update)
+     * @return string|false
+     */
+    public function getDefaultErrorMessage($formId, $type);
+
+    /**
+     * @param $formId
      * @param string $type (insert|update)
      * @return string|false
      */
@@ -50,7 +56,15 @@ interface FormDataProcessorInterface
 
     /**
      * @param $extensionId
-     * @return FormDataProcessorExtensionInterface|false
+     * @return false|mixed
      */
     public function getExtension($extensionId);
+
+    /**
+     * Returns the (main) table that should be inserted/updated.
+     * Null means auto.
+     *
+     * @return null|string
+     */
+    public function getTable();
 }
