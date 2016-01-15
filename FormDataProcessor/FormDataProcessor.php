@@ -5,7 +5,6 @@ namespace Meredith\FormDataProcessor;
 /*
  * LingTalfi 2016-01-02
  */
-
 class FormDataProcessor implements FormDataProcessorInterface
 {
 
@@ -19,10 +18,12 @@ class FormDataProcessor implements FormDataProcessorInterface
     private $fields;
     private $getSuccessMsgCb;
     private $getDuplicateEntryMsgCb;
+    private $extensions;
 
     public function __construct()
     {
         $this->fields = [];
+        $this->extensions = [];
     }
 
 
@@ -35,6 +36,12 @@ class FormDataProcessor implements FormDataProcessorInterface
     public function addField($name, $isAutoIncremented = false, $isIdf = false, $defaultValue = 0)
     {
         $this->fields[] = [$name, $isAutoIncremented, $isIdf, $defaultValue];
+        return $this;
+    }
+
+    public function setExtension($extensionId, $extension)
+    {
+        $this->extensions[$extensionId] = $extension;
         return $this;
     }
 
@@ -108,6 +115,20 @@ class FormDataProcessor implements FormDataProcessorInterface
         }
         return false;
     }
+
+    /**
+     * @param $extensionId
+     * @return mixed|false
+     */
+    public function getExtension($extensionId)
+    {
+        if (array_key_exists($extensionId, $this->extensions)) {
+            return $this->extensions[$extensionId];
+        }
+        return false;
+    }
+
+
 
     //------------------------------------------------------------------------------/
     // 

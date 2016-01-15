@@ -34,6 +34,11 @@ History Log
 ------------------
 
         
+- 2.3.0 -- 2016-01-15
+
+    - add ColisControl
+    
+        
 - 2.2.0 -- 2016-01-13
 
     - add ListHandlerInterface.setWhere 

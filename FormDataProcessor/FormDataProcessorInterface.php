@@ -5,6 +5,8 @@ namespace Meredith\FormDataProcessor;
 /*
  * LingTalfi 2016-01-02
  */
+use Meredith\FormDataProcessor\Extension\FormDataProcessorExtensionInterface;
+
 interface FormDataProcessorInterface
 {
 
@@ -44,4 +46,11 @@ interface FormDataProcessorInterface
      * @return string|false
      */
     public function getDuplicateEntryMessage($formId, $type);
+
+
+    /**
+     * @param $extensionId
+     * @return FormDataProcessorExtensionInterface|false
+     */
+    public function getExtension($extensionId);
 }
