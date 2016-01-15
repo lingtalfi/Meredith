@@ -19,6 +19,7 @@ class FormDataProcessor implements FormDataProcessorInterface
     private $getSuccessMsgCb;
     private $getDefaultErrorMsgCb;
     private $getDuplicateEntryMsgCb;
+    private $getOnInsertBeforeCb;
     private $extensions;
     private $table;
 
@@ -35,7 +36,7 @@ class FormDataProcessor implements FormDataProcessorInterface
     }
 
 
-    public function addField($name, $isAutoIncremented = false, $isIdf = false, $defaultValue = 0)
+    public function addField($name, $isAutoIncremented = false, $isIdf = false, $defaultValue = null)
     {
         $this->fields[] = [$name, $isAutoIncremented, $isIdf, $defaultValue];
         return $this;
@@ -104,6 +105,7 @@ class FormDataProcessor implements FormDataProcessorInterface
         }
         return false;
     }
+
     /**
      * @param $formId
      * @param string $type (insert|update)
@@ -147,6 +149,13 @@ class FormDataProcessor implements FormDataProcessorInterface
         return $this->table;
     }
 
+    public function onInsertBefore($table, array $values, &$cancelMsg)
+    {
+        if (null !== $this->getOnInsertBeforeCb) {
+            return call_user_func_array($this->getOnInsertBeforeCb, [$table, $values, &$cancelMsg]);
+        }
+    }
+
 
     //------------------------------------------------------------------------------/
     // 
@@ -162,7 +171,7 @@ class FormDataProcessor implements FormDataProcessorInterface
         $this->getSuccessMsgCb = $getSuccessMsgCb;
         return $this;
     }
-    
+
     public function setGetDefaultErrorMsgCb(callable $cb)
     {
         $this->getDefaultErrorMsgCb = $cb;
@@ -175,5 +184,11 @@ class FormDataProcessor implements FormDataProcessorInterface
         return $this;
     }
 
-    
+    public function setGetOnInsertBeforeCb(callable $getOnInsertBeforeCb)
+    {
+        $this->getOnInsertBeforeCb = $getOnInsertBeforeCb;
+        return $this;
+    }
+
+
 }

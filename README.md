@@ -34,6 +34,12 @@ History Log
 ------------------
 
         
+- 2.5.0 -- 2016-01-15
+
+    - FormDataProcessor: fix default value is null instead of 0
+    - insert_update_row.php: add possibility to cancel an insert from the meredith flow
+        
+        
 - 2.4.0 -- 2016-01-15
 
     - insert_update_row.php: can now define the table from the meredith workflow

@@ -67,4 +67,19 @@ interface FormDataProcessorInterface
      * @return null|string
      */
     public function getTable();
+
+    /**
+     * This method is executed just before an insert.
+     * It has the power to skip the insert, if cancelMsg is set to a non null value.
+     *
+     * This method is the opportunity for you to check special unique constraints
+     * for instance.
+     *
+     *
+     * @param string $table,
+     * @param array $values
+     * @param $cancelMsg
+     * @return void
+     */
+    public function onInsertBefore($table, array $values, &$cancelMsg);
 }
