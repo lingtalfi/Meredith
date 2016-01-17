@@ -20,17 +20,22 @@ TimServer::create()->start(function (TimServerInterface $server) {
         is_array($_POST['ids'])
     ) {
         $ids = $_POST['ids'];
-        $view = (string)$_POST['formId'];
+        $formId = (string)$_POST['formId'];
 
 
-        if (true === MeredithSupervisor::inst()->isGranted($view, 'delete')) {
+        if (true === MeredithSupervisor::inst()->isGranted($formId, 'delete')) {
 
 
+
+            $mc = MeredithSupervisor::inst()->getMainController($formId);
+            $table = $mc->getReferenceTable();
+            
+            
             array_walk($ids, function (&$v) {
                 $v = (int)$v;
             });
             if ($ids) {
-                if (false !== $nbDelete = QuickPdo::delete($view, "id in (" . implode(", ", $ids) . ")")) {
+                if (false !== $nbDelete = QuickPdo::delete($table, "id in (" . implode(", ", $ids) . ")")) {
                     $server->success("ok");
                 }
                 else {
@@ -43,7 +48,7 @@ TimServer::create()->start(function (TimServerInterface $server) {
 
         }
         else {
-            throw new MeredithException("Permission not granted to access rows with $view");
+            throw new MeredithException("Permission not granted to access rows with $formId");
         }
     }
     else {

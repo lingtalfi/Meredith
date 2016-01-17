@@ -19,12 +19,16 @@ TimServer::create()->start(function (TimServerInterface $server) {
         isset($_POST['id'])
     ) {
         $id = (int)$_POST['id'];
-        $view = (string)$_POST['formId'];
+        $formId = (string)$_POST['formId'];
 
 
-        if (true === MeredithSupervisor::inst()->isGranted($view, 'fetch')) {
+        if (true === MeredithSupervisor::inst()->isGranted($formId, 'fetch')) {
 
-            if (false !== $info = QuickPdo::fetch("select * from $view where id=$id")) {
+
+            $mc = MeredithSupervisor::inst()->getMainController($formId);
+            $table = $mc->getReferenceTable();
+
+            if (false !== $info = QuickPdo::fetch("select * from $table where id=$id")) {
                 $server->success($info);
             }
             else {
@@ -32,7 +36,7 @@ TimServer::create()->start(function (TimServerInterface $server) {
             }
         }
         else {
-            throw new MeredithException("Permission not granted to access rows with $view");
+            throw new MeredithException("Permission not granted to access rows with $formId");
         }
 
     }

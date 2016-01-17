@@ -21,7 +21,6 @@ class FormDataProcessor implements FormDataProcessorInterface
     private $getDuplicateEntryMsgCb;
     private $getOnInsertBeforeCb;
     private $extensions;
-    private $table;
 
     public function __construct()
     {
@@ -144,10 +143,6 @@ class FormDataProcessor implements FormDataProcessorInterface
         return false;
     }
 
-    public function getTable()
-    {
-        return $this->table;
-    }
 
     public function onInsertBefore($table, array $values, &$cancelMsg)
     {
@@ -175,12 +170,6 @@ class FormDataProcessor implements FormDataProcessorInterface
     public function setGetDefaultErrorMsgCb(callable $cb)
     {
         $this->getDefaultErrorMsgCb = $cb;
-        return $this;
-    }
-
-    public function setTable($table)
-    {
-        $this->table = $table;
         return $this;
     }
 

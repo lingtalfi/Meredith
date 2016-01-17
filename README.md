@@ -15,6 +15,7 @@ Resources
 To learn how to use Meredith, apart from reading the source code, there are the following resources:
 
 
+- [meredith concepts dictionnary](https://github.com/lingtalfi/Meredith/blob/master/_doc/concepts.dict.md), useful for meredith developers 
 - [meredith adaman tutorial](https://github.com/lingtalfi/meredith-adaman), this is actually the non-official documentation
 
 
@@ -33,6 +34,11 @@ Dependencies
 History Log
 ------------------
 
+        
+- 2.6.0 -- 2016-01-17
+
+    - BootstrapControlsRenderer: add control select chain 
+    - BootstrapControlsRenderer: add control token field 
         
 - 2.5.0 -- 2016-01-15
 

@@ -161,7 +161,7 @@ class BaseListHandler implements ListHandlerInterface
         if (null !== $this->from) {
             return $this->from;
         }
-        return $mc->getFormId();
+        return $mc->getReferenceTable();
     }
 
     /**

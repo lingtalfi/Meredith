@@ -20,4 +20,15 @@
         
         ?>
     ];
+
+
+    <?php if($lengthMenu): ?>
+    window.meredithRegistry.lengthMenu = <?php echo json_encode($lengthMenu); ?>;
+    <?php endif; ?>
+
+    <?php if($pageLength): ?>
+    window.meredithRegistry.pageLength = <?php echo $pageLength; ?>;
+    <?php endif; ?>
+
+
 </script>

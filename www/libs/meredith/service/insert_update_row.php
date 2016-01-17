@@ -8,6 +8,7 @@ use Bat\ArrayTool;
 use Meredith\Exception\MeredithException;
 use Meredith\Supervisor\MeredithSupervisor;
 use QuickPdo\QuickPdo;
+use QuickPdo\QuickPdoInfoTool;
 use Tim\TimServer\OpaqueTimServer;
 use Tim\TimServer\TimServerInterface;
 
@@ -43,16 +44,21 @@ OpaqueTimServer::create()
 
 
                 $mc = MeredithSupervisor::inst()->getMainController($formId);
-                $defaultValues = $mc->getFormDataProcessor()->getDefaultValues();
+                $dp = $mc->getFormDataProcessor();
+                $defaultValues = $dp->getDefaultValues();
+                $table = $mc->getReferenceTable();
+
+
                 $arr = array_replace($defaultValues, $arr);
 
-                $idf = $mc->getFormDataProcessor()->getIdentfyingFields();
+                $idf = $dp->getIdentfyingFields();
 
 
-                $nac = $mc->getFormDataProcessor()->getNonAutoIncrementedFields();
+                $nac = $dp->getNonAutoIncrementedFields();
                 $nac2Values = array_intersect_key($arr, array_flip($nac));
+                    
 
-
+                $isSuccess = false;
                 try {
                     $mode = 'insert';
                     if (false === ($missing = ArrayTool::getMissingKeys($arr, $idf))) {
@@ -68,13 +74,14 @@ OpaqueTimServer::create()
                             }
 
                             if (true === QuickPdo::update($table, $nac2Values, $where)) {
-                                $msg = $mc->getFormDataProcessor()->getSuccessMessage($formId, 'update');
+                                $msg = $dp->getSuccessMessage($formId, 'update');
                                 if (false === $msg) {
                                     $msg = MeredithSupervisor::inst()->translate("The record has been successfully updated");
                                 }
                                 $server->success([
                                     'msg' => $msg,
                                 ]);
+                                $isSuccess = true;
                             }
                             else {
                                 $server->error(MeredithSupervisor::inst()->translate("An error occurred with the database, please retry later"));
@@ -87,28 +94,59 @@ OpaqueTimServer::create()
                     else {
                         // insert
                         if (true === MeredithSupervisor::inst()->isGranted($formId, 'insert')) {
-                            if (false !== $id = QuickPdo::insert($table, $nac2Values)) {
-                                $msg = $mc->getFormDataProcessor()->getSuccessMessage($formId, 'insert');
-                                if (false === $msg) {
-                                    $msg = MeredithSupervisor::inst()->translate("The record has been successfully recorded");
+
+
+                            $cancelMsg = null;
+                            $dp->onInsertBefore($table, $nac2Values, $cancelMsg);
+                            if (null === $cancelMsg) {
+
+
+                                if (false !== $id = QuickPdo::insert($table, $nac2Values)) {
+                                    $msg = $dp->getSuccessMessage($formId, 'insert');
+                                    if (false === $msg) {
+                                        $msg = MeredithSupervisor::inst()->translate("The record has been successfully recorded");
+                                    }
+                                    $server->success([
+                                        'msg' => $msg,
+                                    ]);
+                                    $isSuccess = true;
                                 }
-                                $server->success([
-                                    'msg' => $msg,
-                                ]);
+                                else {
+                                    $server->error(MeredithSupervisor::inst()->translate("An error occurred with the database, please retry later"));
+                                }
                             }
                             else {
-                                $server->error(MeredithSupervisor::inst()->translate("An error occurred with the database, please retry later"));
+                                $server->error($cancelMsg);
                             }
                         }
                         else {
                             throw new MeredithException("Permission not granted to insert with $formId");
                         }
                     }
+                    
+                    
+                    
+                    
+                    
                 } catch (\PDOException $e) {
-                    if ('23000' === $e->getCode()) { // integrity constraint violation 
-                        $msg = $mc->getFormDataProcessor()->getDuplicateEntryMessage($formId, $mode);
+                    if ('23000' === $e->getCode()) { // integrity constraint violation
+
+                        MeredithSupervisor::inst()->log($e);
+
+                        $msg = false;
+                        if ('mysql' === QuickPdoInfoTool::getDriver()) {
+                            if (1062 === $e->errorInfo[1]) { // Duplicate entry '%s' for key %d 
+                                $msg = $dp->getDuplicateEntryMessage($formId, $mode);
+                                if (false === $msg) {
+                                    $msg = "A similar item already exists in the database";
+                                }
+                            }
+                        }
                         if (false === $msg) {
-                            $msg = "A similar item already exists in the database";
+                            $msg = $dp->getDefaultErrorMessage($formId, $mode);
+                            if (false === $msg) {
+                                $msg = 'A problem occurred with the database';
+                            }
                         }
                         $server->error($msg);
                     }

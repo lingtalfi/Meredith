@@ -62,7 +62,7 @@ interface ListHandlerInterface
     public function getMainAlias();
 
     /**
-     * Return the cosmetic fields aware from clause
+     * Return the cosmetic fields aware from clause.
      *
      * @param MainControllerInterface $mc
      * @return string

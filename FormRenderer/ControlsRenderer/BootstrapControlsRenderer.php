@@ -8,7 +8,10 @@ use Meredith\FormRenderer\ControlsRenderer\Control\ColisControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\ControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\InputControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\MonoStatusControlInterface;
+use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainMasterControlInterface;
+use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainSlaveControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectControlInterface;
+use Meredith\FormRenderer\ControlsRenderer\Control\TokenFieldControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\UrlWithDropZoneControlInterface;
 
 /**
@@ -20,8 +23,17 @@ class BootstrapControlsRenderer extends ControlsRenderer
 
     protected function renderControl(ControlInterface $c)
     {
-        if ($c instanceof InputControlInterface) {
-            return $this->renderInputControl($c);
+        if ($c instanceof SingleSelectChainMasterControlInterface) {
+            return $this->renderSingleSelectChainMasterControl($c);
+        }
+        elseif ($c instanceof SingleSelectChainSlaveControlInterface) {
+            return $this->renderSingleSelectChainSlaveControl($c);
+        }
+        elseif ($c instanceof ColisControlInterface) {
+            return $this->renderColisControl($c);
+        }
+        elseif ($c instanceof TokenFieldControlInterface) {
+            return $this->renderTokenFieldControl($c);
         }
         elseif ($c instanceof MonoStatusControlInterface) {
             return $this->renderMonoStatusControl($c);
@@ -29,8 +41,8 @@ class BootstrapControlsRenderer extends ControlsRenderer
         elseif ($c instanceof SingleSelectControlInterface) {
             return $this->renderSingleSelectStatusControl($c);
         }
-        elseif ($c instanceof ColisControlInterface) {
-            return $this->renderColisControl($c);
+        elseif ($c instanceof InputControlInterface) {
+            return $this->renderInputControl($c);
         }
         else {
             $this->log(sprintf("Doesn't know how to render control of class %s", get_class($c)));
@@ -77,6 +89,7 @@ EEE;
         $label = $c->getLabel();
         $value = htmlspecialchars($c->getValue());
         $name = htmlspecialchars($c->getName());
+        $id = htmlspecialchars($name);
         $checked = (true === (bool)$value) ? 'checked="checked"' : '';
 
         return <<<EEE
@@ -85,7 +98,7 @@ EEE;
     <div class="col-lg-9">
         <div class="checkbox checkbox-switchery switchery-xs">
             <label>
-                <input type="checkbox" name="$name" value="$value" class="switchery" $checked>
+                <input id="$id" type="checkbox" name="$name" value="$value" class="switchery" $checked>
                 $label
             </label>
         </div>
@@ -96,8 +109,7 @@ EEE;
 
     }
 
-    
-    
+
     private function renderSingleSelectStatusControl(SingleSelectControlInterface $c)
     {
         $label = $c->getLabel();
@@ -105,14 +117,13 @@ EEE;
         $name = htmlspecialchars($c->getName());
         $v2l = $c->getValues2Labels();
 
-
         $s = '';
         $s .= <<<EEE
 <!-- single select -->
 <div class="form-group">
     <label class="control-label col-lg-2">$label</label>
     <div class="col-lg-10">
-        <select class="form-control" name="$name">
+        <select id="$name"  class="form-control" name="$name">
 EEE;
 
         foreach ($v2l as $v => $l) {
@@ -131,9 +142,84 @@ EEE;
     }
 
 
+    private function renderSingleSelectChainMasterControl(SingleSelectChainMasterControlInterface $c)
+    {
+        $label = $c->getLabel();
+        $value = $c->getValue();
+        $name = htmlspecialchars($c->getName());
+        $v2l = $c->getValues2Labels();
+        $nodes = $c->getNodes();
+        $options = json_encode($c->getOptions());
 
 
+        $s = '';
+        $s .= <<<EEE
+<!-- single select chain's master -->
+<div class="form-group">
+    <label class="control-label col-lg-2">$label</label>
+    <div class="col-lg-10">
+        <select id="$name" class="form-control" name="$name">
+EEE;
 
+        foreach ($v2l as $v => $l) {
+            $sSel = ($v === $value) ? ' selected="selected"' : '';
+            $val = htmlspecialchars($v);
+            $s .= "<option" . $sSel . " value=\"$val\">$l</option>";
+        }
+        $s .= <<<EEE
+        </select>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            var oChain = new window.selectChain($options);\n
+EEE;
+        $lastNode = array_pop($nodes);
+        if ($nodes) {
+            foreach ($nodes as $node) {
+                list($name, $url, $params) = $node;
+                $params = json_encode($params);
+                $s .= "oChain.addNode($('form #$name'), '$url', $params);\n";
+            }
+        }
+        if ($lastNode) {
+            $name = array_shift($lastNode);
+            $s .= "oChain.addNode($('form #$name'));\n";
+        }
+        $s .= <<<EEE
+            oChain.start();
+        });
+    })(jQuery);
+</script>
+<!-- /single select chain's master -->
+EEE;
+
+        return $s;
+
+    }
+
+    private function renderSingleSelectChainSlaveControl(SingleSelectChainSlaveControlInterface $c)
+    {
+        $label = $c->getLabel();
+        $name = htmlspecialchars($c->getName());
+
+        $s = '';
+        $s .= <<<EEE
+<!-- single select chain's slave -->
+<div class="form-group">
+    <label class="control-label col-lg-2">$label</label>
+    <div class="col-lg-10">
+        <select id="$name" class="form-control" name="$name"></select>
+    </div>
+</div>
+<!-- /single select chain's slave -->
+EEE;
+
+        return $s;
+
+    }
 
 
     private function renderColisControl(ColisControlInterface $c)
@@ -149,24 +235,22 @@ EEE;
         $placeholder = htmlspecialchars($c->getPlaceholder());
         $value = htmlspecialchars($c->getValue());
         $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
-        
-        
+
+
         $extensions = $c->getExtensions();
         $profileId = $c->getProfileId();
         $itemNames = $c->getItemNames();
         $maxSize = $c->getMaxSize();
         $chunkSize = $c->getChunkSize();
         $onPreviewDisplayAfter = $c->getOnPreviewDisplayAfterJsCallback();
-        
-        
-        
+
+
         $colisDataId = 'colis-' . CaseTool::toSnake($id);
-        
+
         $itemNames = json_encode($itemNames);
         $previewOptions = json_encode($c->getPreviewOptions());
 
 
-        
         return <<<EEE
 <!-- input field -->
 <div class="form-group">
@@ -235,7 +319,73 @@ EEE;
 EEE;
 
     }
+
+    
+    private function renderTokenFieldControl(TokenFieldControlInterface $c)
+    {
+        $label = $c->getLabel();
+        $required = "";
+        if (true === $c->getIsRequired()) {
+            $label .= ' <span class="text-danger">*</span>';
+            $required = ' required="required"';
+        }
+        $name = htmlspecialchars($c->getName());
+        $id = htmlspecialchars($name);
+        $placeholder = htmlspecialchars($c->getPlaceholder());
+        $value = htmlspecialchars($c->getValue());
+        $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
+        $sugg = $c->getSuggestions();
+        $fSugg = [];
+        foreach($sugg as $v){
+            $fSugg[] = ['value' => $v];
+        }
+        $fSugg = json_encode($fSugg);
+        
+        
+
+        return <<<EEE
+<!-- input field -->
+<div class="form-group">
+    <label class="control-label col-lg-3">$label</label>
+
+    <div class="col-lg-9">
+        <input type="text" name="$name" class="form-control tokenfield-typeahead" id="$id"
+               $required placeholder="$placeholder"
+               value="$value">
+        $help
+    </div>
+</div>
+<script>
+   (function ($) {
+        $(document).ready(function () {
+        
+        
+            var engine = new Bloodhound({
+                local: $fSugg,
+                datumTokenizer: function(d) {
+                    return Bloodhound.tokenizers.whitespace(d.value);
+                },
+                queryTokenizer: Bloodhound.tokenizers.whitespace
+            });
+        
+            // Initialize engine
+            engine.initialize();
+        
+            // Initialize tokenfield
+            $('form #$id').tokenfield({
+                typeahead: [null, { source: engine.ttAdapter() }]
+            });
+        
+
+        });
+    })(jQuery);
     
     
+</script>
+<!-- /input field -->
+EEE;
+
+    }
+
 
 }

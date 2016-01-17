@@ -189,7 +189,9 @@ if (isset($_GET['table'])) {
 
 
                         $stmt .= $sOrder;
-                        $stmt .= " limit $start, $length";
+                        if (-1 !== (int)$length) {
+                            $stmt .= " limit $start, $length";
+                        }
 
                         if (false !== $res = QuickPdo::fetchAll($stmt, $markers)) {
                             $ret['data'] = [];
@@ -211,7 +213,7 @@ if (isset($_GET['table'])) {
 
             } catch (\Exception $e) {
                 $ret['error'] = MeredithSupervisor::inst()->translate("Oops! An error occurred, please retry later");
-                MeredithSupervisor::inst()->log("Oops! An error occurred, please retry later: $stmt -- " . $e->getMessage());
+                MeredithSupervisor::inst()->log($e);
             }
         }
 

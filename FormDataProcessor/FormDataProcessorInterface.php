@@ -60,13 +60,6 @@ interface FormDataProcessorInterface
      */
     public function getExtension($extensionId);
 
-    /**
-     * Returns the (main) table that should be inserted/updated.
-     * Null means auto.
-     *
-     * @return null|string
-     */
-    public function getTable();
 
     /**
      * This method is executed just before an insert.

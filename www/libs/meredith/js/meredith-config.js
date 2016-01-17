@@ -32,6 +32,8 @@
             autoWidth: false,
             dom: '<"datatable-header"fBl><"datatable-scroll"t><"datatable-footer"ip>',
             buttons: meredithRegistry.buttons,
+            lengthMenu: meredithRegistry.lengthMenu,
+            pageLength: meredithRegistry.pageLength,
             language: {
                 search: '<span>Filter:</span> _INPUT_',
                 lengthMenu: '<span>Show:</span> _MENU_',

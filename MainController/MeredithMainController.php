@@ -21,7 +21,8 @@ class MeredithMainController implements MainControllerInterface
     private $formHandler;
     private $listHandler;
     private $tableColumnsFactory;
- 
+    private $referenceTable;
+
 
     public function __construct()
     {
@@ -47,14 +48,14 @@ class MeredithMainController implements MainControllerInterface
     {
         return $this->formDataProcessor;
     }
-    
+
 
     public function getFormId()
     {
         return $this->formId;
     }
 
-    
+
     /**
      * @return FormHandlerInterface
      */
@@ -78,7 +79,18 @@ class MeredithMainController implements MainControllerInterface
         return $this->tableColumnsFactory;
     }
 
- 
+    /**
+     * @return string
+     */
+    public function getReferenceTable()
+    {
+        if (null !== $this->referenceTable) {
+            return $this->referenceTable;
+        }
+        return $this->formId;
+    }
+
+
 
 
     //------------------------------------------------------------------------------/
@@ -107,5 +119,12 @@ class MeredithMainController implements MainControllerInterface
         $this->formDataProcessor = $p;
         return $this;
     }
+
+    public function setReferenceTable($referenceTable)
+    {
+        $this->referenceTable = $referenceTable;
+        return $this;
+    }
+
 
 }

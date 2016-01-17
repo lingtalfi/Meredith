@@ -30,5 +30,10 @@ interface MainControllerInterface
      */
     public function getListHandler();
 
+    /**
+     * @return string
+     */
+    public function getReferenceTable();
+
 
 }
