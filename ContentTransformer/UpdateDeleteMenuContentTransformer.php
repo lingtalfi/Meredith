@@ -10,11 +10,15 @@ use Meredith\Tool\MeredithTool;
 class UpdateDeleteMenuContentTransformer implements ContentTransformerInterface
 {
 
+    private $useUpdate;
+    private $useDelete;
     private $updateText;
     private $deleteText;
 
     public function __construct()
     {
+        $this->useUpdate = true;
+        $this->useDelete = true;
         $this->updateText = "Update";
         $this->deleteText = "Delete";
     }
@@ -29,8 +33,13 @@ class UpdateDeleteMenuContentTransformer implements ContentTransformerInterface
     {
         $update = MeredithTool::jsQuoteEscape($this->updateText);
         $delete = MeredithTool::jsQuoteEscape($this->deleteText);
+
+        $useUpdate = (true === $this->useUpdate) ? 'true' : 'false';
+        $useDelete = (true === $this->useDelete) ? 'true' : 'false';
         return <<<EEE
             meredithColumnDefsFactory.actionMenu({
+                useUpdate: $useUpdate,
+                useDelete: $useDelete,
                 updateText: "$update",
                 deleteText: "$delete"
             })
@@ -50,4 +59,17 @@ EEE;
         return $this;
     }
 
+    public function setUseDelete($useDelete)
+    {
+        $this->useDelete = $useDelete;
+        return $this;
+    }
+
+    public function setUseUpdate($useUpdate)
+    {
+        $this->useUpdate = $useUpdate;
+        return $this;
+    }
+
+    
 }

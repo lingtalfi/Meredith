@@ -27,9 +27,10 @@
                     });
                 $('#meredith_warning_modal').modal('show');
             },
-            removeIds: function (ids, dt) {
+            removeIdfs: function (ids, dt) {
                 var formId = $('.datatable-meredith').data("formId");
                 var url = $('.datatable-meredith').data("delete_rows_url");
+
                 timPost(url, {
                     ids: ids,
                     formId: formId
@@ -44,7 +45,7 @@
                 var url = meredithRegistry.insertUpdateUrl;
                 var formId = jForm.attr("data-meredith");
                 var data = jForm.serializeObject();
-                data.formId = formId;
+                data.meredithFormId = formId;
 
 
                 // clean state
@@ -54,10 +55,9 @@
                 var isInsert = true;
 
 
-                // part of future meredith..., todo: also handle pk
-                var id = jForm.data('meredith.the_id');
-                if ('undefined' !== typeof id) {
-                    data.id = id;
+                var idf = jForm.data('meredith.idf2Values');
+                if ('undefined' !== typeof idf) {
+                    data.meredithIdf = idf;
                     isInsert = false;
                 }
 
@@ -127,17 +127,19 @@
                     text: opts.text,
                     action: function (e, dt, node, config) {
 
-                        var idObjects = dt.rows({selected: true}).ids();
-                        var ids = [];
-                        for (var i = 0; i < idObjects.length; i++) {
-                            ids.push(idObjects[i]);
-                        }
 
+                        var idfs = [];
+                        var objects = dt.rows({selected: true}).data();
+                        for (var i = 0; i < objects.length; i++) {
+                            var idf2Values = objects[i]['DT_RowData']['idf'];
+                            idfs.push(idf2Values);
+                        }
+                        
                         bootbox.confirm({
                                 message: opts.confirmText,
                                 callback: function (result) {
                                     if (true === result) {
-                                        meredithFunctions.removeIds(ids, dt);
+                                        meredithFunctions.removeIdfs(idfs, dt);
                                     }
                                 },
                                 buttons: {
@@ -151,8 +153,6 @@
                                 }
                             }
                         );
-
-
                     }
                 };
             }
@@ -162,10 +162,28 @@
         window.meredithColumnDefsFactory = {
             actionMenu: function (options) {
                 var opts = $.extend({
+                    useUpdate: true,
+                    useDelete: true,
                     updateText: "Update",
                     deleteText: "Delete",
                     target: -1
                 }, options);
+
+
+                var sUpdate = '';
+                if (true === opts.useUpdate) {
+                    sUpdate = ''
+                    + '<li><a data-target="#meredith_edit_modal" data-toggle="modal" href="#">'
+                    + '<i class="icon-pencil7"></i> ' + opts.updateText + '</a></li>';
+                }
+
+
+                var sDelete = '';
+                if (true === opts.useDelete) {
+                    sDelete = ''
+                    + '<li><a data-target="#meredith_remove_modal" data-toggle="modal" href="#">'
+                    + '<i class="icon-trash"></i> ' + opts.deleteText + '</a></li>';
+                }
 
                 return {
                     "targets": opts.target,
@@ -176,10 +194,8 @@
                     + '<i class="icon-menu9"></i>'
                     + '</a>'
                     + '<ul class="dropdown-menu dropdown-menu-right">'
-                    + '<li><a data-target="#meredith_edit_modal" data-toggle="modal" href="#">'
-                    + '<i class="icon-pencil7"></i> ' + opts.updateText + '</a></li>'
-                    + '<li><a data-target="#meredith_remove_modal" data-toggle="modal" href="#">'
-                    + '<i class="icon-trash"></i> ' + opts.deleteText + '</a></li>'
+                    + sUpdate
+                    + sDelete
                     + '</ul></li>'
                     + '</ul>'
                 };

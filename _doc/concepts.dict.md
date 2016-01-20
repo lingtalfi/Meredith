@@ -73,13 +73,18 @@ select p.id, concat(categories_id, ". ", ca.the_name) as categories_id, p.the_na
 Ok, now that's much better.
 We just did a cosmetic change. 
 
+ 
 
 
 
 
 
 
+foreign field
+-----------------------------------
+2016-01-18
 
+In the insert/update automated workflow: a foreign field is a field that doesn't belong to the referenceTable.
 
 
 
@@ -92,14 +97,45 @@ The meredith client always passes a formId parameter, so that the meredith serve
 
 
 
+idf
+-----------------------------------
+2016-01-18
+
+Identifying fields. The name of the fields (columns) necessary to identify any row in a given table (notice that 
+an idf can only target one table).
+It might be the very common id column, or an array of columns.
+
+
+
+
+insert/update automated workflow
+-----------------------------------
+2016-01-18
+
+This is the default meredith workflow to handle insert/update requests.
+It basically does two things:
+
+- insert/update data in the **referenceTable**
+- fires the onSuccessAfter callback in case of success 
+        This design allow the meredith developer to interact with multiple tables (for instance add tags 
+        to a foreign table),
+        although only the reference table is "automatically" handled by meredith.
+
+
+
+
+
+
 referenceTable
 -----------------
 2016-01-16
 
-The **reference table** is the table that the meredith server acts upon.
+The **reference table** is the main table that the meredith server acts upon in the **insert/update automated workflow**.
  
 When the meredith client requests the meredith server, the server has to know which table(s) it should act upon.
-In most cases, the meredith server will only interact with one table, which is known as the **reference Table**.
+In most cases, the meredith server will only interact with one table, which is known as the **reference table**.
+
+
 
 By default, it assumes that the **reference table** IS the **formId** passed by the client.
 However, if the application maintainer decides so, she can map any formId to any table.  

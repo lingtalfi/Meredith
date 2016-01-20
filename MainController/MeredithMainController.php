@@ -22,11 +22,13 @@ class MeredithMainController implements MainControllerInterface
     private $listHandler;
     private $tableColumnsFactory;
     private $referenceTable;
+    private $idf;
+    private $autoIncremented;
 
 
     public function __construct()
     {
-        //
+        $this->idf = [];
     }
 
 
@@ -90,6 +92,19 @@ class MeredithMainController implements MainControllerInterface
         return $this->formId;
     }
 
+    /**
+     * @return array
+     */
+    public function getIdentifyingFields()
+    {
+        return $this->idf;
+    }
+
+
+    public function getAutoIncrementedField()
+    {
+        return $this->autoIncremented;
+    }
 
 
 
@@ -123,6 +138,18 @@ class MeredithMainController implements MainControllerInterface
     public function setReferenceTable($referenceTable)
     {
         $this->referenceTable = $referenceTable;
+        return $this;
+    }
+
+    public function setAutoIncrementedField($field)
+    {
+        $this->autoIncremented = $field;
+        return $this;
+    }
+
+    public function setIdentifyingFields(array $idf)
+    {
+        $this->idf = $idf;
         return $this;
     }
 

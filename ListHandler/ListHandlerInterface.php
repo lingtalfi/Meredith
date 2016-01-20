@@ -73,9 +73,41 @@ interface ListHandlerInterface
      * @return array of fields to use in the sql request:
      *              those fields are aware of aliases.
      *              Unchanged fields are returned with the alias prefix,
-     *              and cosmetic fields are returned as is
+     *              and cosmetic fields are returned as is.
+     * 
+     * 
+     * In other words, request fields are fields prepared for the sql request.
+     * 
      */
     public function getRequestFields();
+
+    /**
+     * @return array of requestIdf => effectiveIdf
+     *                  With: 
+     *                      requestIdf: request identifying fields as they are written in the sql request (might be enhanced by cosmetic changes).
+     *                      effectiveIdf: idf that you need to actually interact with the sql server.
+     * 
+     * 
+     * Rationale:
+     * identifying fields might be different from request identifying fields.
+     * This happens when the developer uses cosmetic change on identifying fields.
+     * 
+     * In the GUI, when the list is displayed, we need to pass the real idfs,
+     * because those are needed by the GUI to request services like fetch_row 
+     * or delete_rows.
+     * But, on the other hand, if the developer uses cosmetic changes on identifying fields,
+     * the sql request is changed and cosmetic idfs are returned to the GUI, which is a 
+     * big problem (cannot request the fetch_row and delete_rows services properly).
+     * 
+     * Therefore, we provide the getRequestIdentifyingFields method, which corrects this problem
+     * by passing the real identifying fields to the GUI.
+     * This method is used in the datatables_server_side_processor, and the real idfs are passed
+     * to datatables using its DT_RowData parameter.
+     * 
+     * Note that you only need this method if you are applying cosmetic changes on idfs.
+     * 
+     */
+    public function getRequestIdentifyingFields();
 
 
     //------------------------------------------------------------------------------/
@@ -85,5 +117,15 @@ interface ListHandlerInterface
      * @return string|null
      */
     public function getWhere();
+
+    //------------------------------------------------------------------------------/
+    // FETCH ROW SERVICE
+    //------------------------------------------------------------------------------/
+    /**
+     * @param array $info
+     * @param array $idf, the identifying fields
+     * @return mixed
+     */
+    public function onFetchAfter(array &$info, array $idf);
     
 }

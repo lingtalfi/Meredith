@@ -29,8 +29,11 @@ interface ControlInterface
     public function getHelp();
 
     /**
-     * Used only to display/not display the asterisk
+     * Used only to display/not display the asterisk,
+     * and to set the required="required" attribute, WHICH MIGHT BE USED BY A JS VALIDATION SYSTEM (this is where 
+     * the describing role can be merged with the functional role of validating data).
      */
     public function getIsRequired();
+    public function getIsReadOnly();
 
 }

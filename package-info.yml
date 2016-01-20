@@ -1,4 +1,5 @@
 dependencies:
-    - git::/lingtalfi/Bat:1.23
-    - git::/lingtalfi/QuickPdo:1.4.0
-    - git::/lingtalfi/Tim:1.1.0
+    - git::/lingtalfi/Bat:1.29
+    - git::/lingtalfi/QuickPdo:1.7.0
+    - git::/lingtalfi/Tim:1.6.0
+    - git::/lingtalfi/StringFormatter:1.0.0
