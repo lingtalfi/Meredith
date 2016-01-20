@@ -19,6 +19,12 @@
          */
         window.meredithRegistry.onModalOpenAfter = null;
 
+        if ('undefined' === typeof window.meredithRegistry.devError) {
+            window.meredithRegistry.devError = function (msg) {
+                console.log("Meredith.devError: " + msg);
+            };
+        }
+
 
         window.meredithOnDrawAfter = function () {
 
@@ -54,7 +60,6 @@
                 $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').removeClass('dropup');
             },
             rowCallback: function (row, data) {
-
                 // uncomment this and in initComplete to have persistent selection 
                 //if ($.inArray(parseInt(data.DT_RowId), selected) !== -1) {
                 //    $(row).addClass('selected');
@@ -79,15 +84,13 @@
                     .on('show.bs.modal', function (e) {
                         var jTarget = $(e.relatedTarget);
                         var jRow = jTarget.closest("tr");
-                        var id = jRow.attr('id');
-
+                        var idf2Values = jRow.data('idf');
                         $("#meredith_remove_row_confirm")
                             .off()
                             .on('click', function () {
-                                meredithFunctions.removeIds([id], table);
+                                meredithFunctions.removeIdfs([idf2Values], table);
                             })
                         ;
-
                     });
 
 
@@ -101,20 +104,22 @@
                          * reset the id/pk of the form being updated,
                          * and other values too...
                          */
-                        jForm.removeData('meredith.the_id');
+                        jForm.removeData('meredith.updatedId');
+                        jForm.removeData('meredith.idf2Values');
                         jForm.removeData('meredith.isSuccess');
 
 
                         var jTarget = $(e.relatedTarget);
                         var jRow = jTarget.closest("tr");
-                        var id = jRow.attr('id');
+                        var idf2Values = jRow.data('idf');
+
 
                         var formId = $('.datatable-meredith').data("formId");
                         var url = $('.datatable-meredith').data("fetch_row_url");
 
 
                         timPost(url, {
-                            id: id,
+                            idf: idf2Values,
                             formId: formId
                         }, function (info) {
                             for (var key in info) {
@@ -153,13 +158,26 @@
                                 func(jForm, info);
                             }
 
-                            // transmit the id or pk to the form, in a secure manner
-                            jForm.data('meredith.the_id', id);
+                            /**
+                             * transmit the jRow so that when it closes,
+                             * we know which tr to visually update.
+                             *
+                             */
+                            jForm.data('meredith.updatedId', jRow.attr('id'));
+
+                            /**
+                             * This value indicates:
+                             *
+                             * - that the form is of type update
+                             * - the idf values
+                             */
+                            jForm.data('meredith.idf2Values', idf2Values);
 
                             //table.row('.selected').remove().draw();
                         }, function (msg) {
                             meredithFunctions.modalWarning(msg);
                         });
+
 
                     })
                     .on('hidden.bs.modal', function () {
@@ -168,8 +186,9 @@
                         if (true === isSuccess) {
 
                             window.meredithOnDrawAfter = function () {
-                                var id = jForm.data("meredith.the_id");
+                                var id = jForm.data("meredith.updatedId");
                                 var jRow = jTable.find("tr[id=" + id + "]");
+
                                 jRow.addClass("highlight");
                                 jRow.stop().animate({
                                     'opacity': '1'

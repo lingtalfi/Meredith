@@ -24,9 +24,10 @@ To learn how to use Meredith, apart from reading the source code, there are the 
 Dependencies
 ------------------
 
-- [lingtalfi/Bat 1.23](https://github.com/lingtalfi/Bat)
-- [lingtalfi/QuickPdo 1.4.0](https://github.com/lingtalfi/QuickPdo)
-- [lingtalfi/Tim 1.1.0](https://github.com/lingtalfi/Tim)
+- [lingtalfi/Bat 1.29](https://github.com/lingtalfi/Bat)
+- [lingtalfi/QuickPdo 1.7.0](https://github.com/lingtalfi/QuickPdo)
+- [lingtalfi/Tim 1.6.0](https://github.com/lingtalfi/Tim)
+- [lingtalfi/StringFormatter 1.0.0](https://github.com/lingtalfi/StringFormatter)
 
 
 
@@ -35,6 +36,24 @@ History Log
 ------------------
 
         
+- 3.0.0 -- 2016-01-20
+
+- design: upgrade to idf (handling of tables with no id column)
+- design: moved getIdentifyingFields and getAutoIncremented to the main controller (and removed from the formDataProcessor)
+- insert_update_row.php: add onSuccessAfter call
+- insert_update_row.php: add onUpdateAfter call
+- insert_update_row.php: now uses transaction
+- insert_update_row.php: fix Opaque server config
+- insert_update_row.php: add getForeignFields method
+- insert_update_row.php: fix log function called twice
+- fetch_row.php: add onFetchAfter
+- meredith.js: meredithColumnDefsFactory.actionMenu, add useUpdate and useDelete options
+- Control: add readOnly attribute
+- services: name services
+- FormDataProcessor:getDefaultErrorMessage, fix: returns a real error message
+
+
+
 - 2.6.0 -- 2016-01-17
 
     - BootstrapControlsRenderer: add control select chain 

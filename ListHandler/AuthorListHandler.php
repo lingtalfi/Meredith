@@ -11,6 +11,7 @@ use Meredith\ListPreConfigScript\AuthorListPreConfigScript;
  */
 class AuthorListHandler extends BaseListHandler
 {
+        
     public function __construct()
     {
         parent::__construct();
@@ -19,6 +20,18 @@ class AuthorListHandler extends BaseListHandler
                 ->addHeaderButton(DeleteSelectedRowsListButtonCode::create())
         );
     }
-
-
+    
+    public function addSmartCosmeticChange($columnName, $cosmeticValue, $isIdentifyingField = false)
+    {
+        $s = "";
+        if (true === $isIdentifyingField) {
+            $ridf = 'meredith_cc_' . $columnName; // meredith cosmetic change
+            $s .= "$columnName as $ridf, ";
+            $this->setRequestIdentifyingField($ridf, $columnName);
+        }
+        $s .= 'concat( "(", ' . $cosmeticValue . ', ")" ) as ' . $columnName;
+        return parent::addCosmeticChange($columnName, $s);
+    }
+    
+    
 }

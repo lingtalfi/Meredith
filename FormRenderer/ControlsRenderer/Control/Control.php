@@ -15,10 +15,12 @@ abstract class Control implements ControlInterface
     public $value;
     public $isRequired;
     public $help;
+    public $readOnly;
 
     public function __construct()
     {
         $this->isRequired = true;
+        $this->readOnly = false;
     }
 
 
@@ -45,6 +47,11 @@ abstract class Control implements ControlInterface
     public function getIsRequired()
     {
         return $this->isRequired;
+    }
+
+    public function getIsReadOnly()
+    {
+        return $this->readOnly;
     }
 
     /**
@@ -114,6 +121,12 @@ abstract class Control implements ControlInterface
         $this->value = $value;
         return $this;
     }
-    
-    
+
+    public function setReadOnly($readOnly)
+    {
+        $this->readOnly = $readOnly;
+        return $this;
+    }
+
+
 }

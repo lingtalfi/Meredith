@@ -20,19 +20,6 @@ interface FormDataProcessorInterface
 
 
     /**
-     * @return array of identifying fields.
-     *
-     *      Identifying fields are the unique fields needed to UPDATE a row in the database.
-     *      Typically, there is only one identifying field named id, but for tables without id,
-     *      we would have an array of fields.
-     *
-     */
-    public function getIdentfyingFields();
-
-    public function getNonAutoIncrementedFields();
-
-
-    /**
      * @param $formId
      * @param string $type (insert|update)
      * @return string|false
@@ -65,14 +52,65 @@ interface FormDataProcessorInterface
      * This method is executed just before an insert.
      * It has the power to skip the insert, if cancelMsg is set to a non null value.
      *
-     * This method is the opportunity for you to check special unique constraints
-     * for instance.
+     * This method is the opportunity for you to check special unique constraints for instance.
+     *
+     * For example, I had the case with two unique indexes, one of them being null:
+     * http://stackoverflow.com/questions/25844786/unique-multiple-columns-and-null-in-one-column
      *
      *
-     * @param string $table,
+     *
+     *
+     * @param string $table ,
      * @param array $values
      * @param $cancelMsg
      * @return void
      */
-    public function onInsertBefore($table, array $values, &$cancelMsg);
+    public function onInsertBefore($table, array $values, &$cancelMsg, array $foreignValues);
+
+    /**
+     *
+     * This method is executed just before an update.
+     * It has the power to skip the update, if cancelMsg is set to a non null value.
+     *
+     * This method is the opportunity for you to check whether a certain operation is
+     * permitted.
+     * For instance, if the user wants to update a configuration table,
+     * she shall not be permitted to update the key, but only the value.
+     *
+     *
+     * @param $table
+     * @param array $values
+     * @param $cancelMsg
+     * @param array $foreignValues
+     * @param array $idf2Values
+     * @return mixed
+     */
+    public function onUpdateBefore($table, array $values, &$cancelMsg, array $foreignValues, array $idf2Values);
+
+
+    /**
+     * This method is called after a successful insert/update, because the dev might want to perform
+     * additional changes to the database, like for instance adding tags after that
+     * an article has been created...
+     *
+     * @param str :mode (insert|update)
+     * @param array :nac2Values, non auto-incremented to values (fields from the reference table only)
+     * @param array :foreignValues, foreign to values (fields that are NOT in reference table only)
+     * @param str|null:lastInsertId,    if the mode is insert, the last inserted id (auto incremented field for mysql).
+     *                                  if the mode is update, the null value
+     * @param array|null:idf2Values, if the mode is insert, the null value
+     *                               if the mode is update, the array of identifying fields 2 values (used in the where clause of the update request)
+     *
+     *
+     * @throws \Exception to interrupt the insert/update transaction.
+     *
+     * Tip:
+     * This method is fired from the insert_update_row service, which uses an Opaque tim server.
+     * So you could throw an exception, or a transparent exception depending on the error message you want to
+     * communicate to the user.
+     */
+    public function onSuccessAfter($mode, array $nac2Values, array $foreignValues, $lastInsertId, $idf2Values);
+
+
+    public function getForeignFields();
 }

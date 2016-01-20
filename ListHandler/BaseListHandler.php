@@ -36,6 +36,8 @@ class BaseListHandler implements ListHandlerInterface
     private $name2cosmetic;
     private $from;
     private $where;
+    private $onFetchAfterCb;
+    private $requestIdentifyingFields;
 
     public function __construct()
     {
@@ -44,6 +46,7 @@ class BaseListHandler implements ListHandlerInterface
         $this->notOrderable = [];
         $this->notSearchable = [];
         $this->name2cosmetic = [];
+        $this->requestIdentifyingFields = [];
     }
 
     public static function create()
@@ -199,6 +202,17 @@ class BaseListHandler implements ListHandlerInterface
     }
 
 
+    public function onFetchAfter(array &$info, array $idf)
+    {
+        if (null !== $this->onFetchAfterCb) {
+            call_user_func_array($this->onFetchAfterCb, [&$info, $idf]);
+        }
+    }
+
+    public function getRequestIdentifyingFields()
+    {
+        return $this->requestIdentifyingFields;
+    }
 
 
 
@@ -267,7 +281,24 @@ class BaseListHandler implements ListHandlerInterface
         $this->where = $where;
         return $this;
     }
-    
+
+    public function setOnFetchAfterCb(callable $onFetchAfterCb)
+    {
+        $this->onFetchAfterCb = $onFetchAfterCb;
+        return $this;
+    }
+
+    public function setRequestIdentifyingFields(array $requestIdentifyingFields)
+    {
+        $this->requestIdentifyingFields = $requestIdentifyingFields;
+        return $this;
+    }
+
+    public function setRequestIdentifyingField($requestIdf, $effectiveIdf)
+    {
+        $this->requestIdentifyingFields[$requestIdf] = $effectiveIdf;
+        return $this;
+    }
 
 
 
@@ -294,5 +325,6 @@ class BaseListHandler implements ListHandlerInterface
         }
         throw new MeredithException("Target $str cannot resolve to an existing column index");
     }
+
 
 }

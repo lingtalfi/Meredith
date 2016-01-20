@@ -13,6 +13,8 @@ class AuthorMainController extends MeredithMainController
     {
         parent::__construct();
         $this->setListHandler(AuthorListHandler::create());
+        $this->setIdentifyingFields(['id']);
+        $this->setAutoIncrementedField('id');
     }
 
 

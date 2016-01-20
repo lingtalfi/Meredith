@@ -10,21 +10,29 @@ class FormDataProcessor implements FormDataProcessorInterface
 
 
     /**
+     * Fields of the referenceTable.
      * @var array
      *          - 0: name
-     *          - 1: is auto incremented
-     *          - 2: is part of idf
+     *          - 1: default value
      */
     private $fields;
+    /**
+     * Fields not in the reference table.
+     * For now, we just take the name, but don't rely on this.
+     */
+    private $foreignFields;
     private $getSuccessMsgCb;
     private $getDefaultErrorMsgCb;
     private $getDuplicateEntryMsgCb;
-    private $getOnInsertBeforeCb;
+    private $onInsertBeforeCb;
+    private $onUpdatetBeforeCb;
+    private $onSuccessAfterCb;
     private $extensions;
 
     public function __construct()
     {
         $this->fields = [];
+        $this->foreignFields = [];
         $this->extensions = [];
     }
 
@@ -35,9 +43,15 @@ class FormDataProcessor implements FormDataProcessorInterface
     }
 
 
-    public function addField($name, $isAutoIncremented = false, $isIdf = false, $defaultValue = null)
+    public function addField($name, $defaultValue = null)
     {
-        $this->fields[] = [$name, $isAutoIncremented, $isIdf, $defaultValue];
+        $this->fields[] = [$name, $defaultValue];
+        return $this;
+    }
+
+    public function addForeignField($name)
+    {
+        $this->foreignFields[] = [$name];
         return $this;
     }
 
@@ -54,40 +68,7 @@ class FormDataProcessor implements FormDataProcessorInterface
     {
         $ret = [];
         foreach ($this->fields as $info) {
-            if (false === $info[1]) {
-                $ret[$info[0]] = $info[3];
-            }
-        }
-        return $ret;
-    }
-
-
-    /**
-     * @return array of identifying fields.
-     *
-     *      Identifying fields are the unique fields needed to UPDATE a row in the database.
-     *      Typically, there is only one identifying field named id, but for tables without id,
-     *      we would have an array of fields.
-     *
-     */
-    public function getIdentfyingFields()
-    {
-        $ret = [];
-        foreach ($this->fields as $info) {
-            if (true === $info[2]) {
-                $ret[] = $info[0];
-            }
-        }
-        return $ret;
-    }
-
-    public function getNonAutoIncrementedFields()
-    {
-        $ret = [];
-        foreach ($this->fields as $info) {
-            if (false === $info[1]) {
-                $ret[] = $info[0];
-            }
+            $ret[$info[0]] = $info[1];
         }
         return $ret;
     }
@@ -112,8 +93,8 @@ class FormDataProcessor implements FormDataProcessorInterface
      */
     public function getDefaultErrorMessage($formId, $type)
     {
-        if (null !== $this->getSuccessMsgCb) {
-            return call_user_func($this->getSuccessMsgCb, $formId, $type);
+        if (null !== $this->getDefaultErrorMsgCb) {
+            return call_user_func($this->getDefaultErrorMsgCb, $formId, $type);
         }
         return false;
     }
@@ -144,12 +125,38 @@ class FormDataProcessor implements FormDataProcessorInterface
     }
 
 
-    public function onInsertBefore($table, array $values, &$cancelMsg)
+    public function onInsertBefore($table, array $values, &$cancelMsg, array $foreignValues)
     {
-        if (null !== $this->getOnInsertBeforeCb) {
-            return call_user_func_array($this->getOnInsertBeforeCb, [$table, $values, &$cancelMsg]);
+        if (null !== $this->onInsertBeforeCb) {
+            return call_user_func_array($this->onInsertBeforeCb, [$table, $values, &$cancelMsg, $foreignValues]);
         }
     }
+
+    public function onUpdateBefore($table, array $values, &$cancelMsg, array $foreignValues, array $idf2Values)
+    {
+        if (null !== $this->onUpdatetBeforeCb) {
+            return call_user_func_array($this->onUpdatetBeforeCb, [$table, $values, &$cancelMsg, $foreignValues, $idf2Values]);
+        }
+    }
+
+
+    public function onSuccessAfter($mode, array $nac2Values, array $foreignValues, $lastInsertId, $idf2Values)
+    {
+        if (null !== $this->onSuccessAfterCb) {
+            call_user_func($this->onSuccessAfterCb, $mode, $nac2Values, $foreignValues, $lastInsertId, $idf2Values);
+        }
+    }
+
+    public function getForeignFields()
+    {
+        $ret = [];
+        foreach ($this->foreignFields as $info) {
+            $ret[] = $info[0];
+        }
+        return $ret;
+    }
+
+
 
 
     //------------------------------------------------------------------------------/
@@ -173,9 +180,37 @@ class FormDataProcessor implements FormDataProcessorInterface
         return $this;
     }
 
-    public function setGetOnInsertBeforeCb(callable $getOnInsertBeforeCb)
+
+    /**
+     * @param callable $cb void function ( $table, array $values, &$cancelMsg, array $foreignValues )
+     * @return $this
+     */
+    public function setOnInsertBeforeCb(callable $cb)
     {
-        $this->getOnInsertBeforeCb = $getOnInsertBeforeCb;
+        $this->onInsertBeforeCb = $cb;
+        return $this;
+    }
+
+
+    /**
+     * @param $onUpdatetBeforeCb   void function ( $table, array $values, &$cancelMsg, array $foreignValues, array $idf2Values )
+     * @return $this
+     */
+    public function setOnUpdatetBeforeCb($onUpdatetBeforeCb)
+    {
+        $this->onUpdatetBeforeCb = $onUpdatetBeforeCb;
+        return $this;
+    }
+
+
+    /**
+     *
+     * @param callable $cb void  function ( $mode, array $nac2Values, $lastInsertId, $idf2Values, array $foreignValues )
+     * @return $this
+     */
+    public function setOnSuccessAfterCb(callable $cb)
+    {
+        $this->onSuccessAfterCb = $cb;
         return $this;
     }
 

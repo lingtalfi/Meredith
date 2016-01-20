@@ -59,12 +59,18 @@ class BootstrapControlsRenderer extends ControlsRenderer
             $label .= ' <span class="text-danger">*</span>';
             $required = ' required="required"';
         }
+        $readOnly = '';
+        if (true === $c->getIsReadOnly()) {
+            $readOnly = ' readonly="readonly"';
+        }
+
         $type = $c->getType();
         $name = htmlspecialchars($c->getName());
         $id = htmlspecialchars($name);
         $placeholder = htmlspecialchars($c->getPlaceholder());
         $value = htmlspecialchars($c->getValue());
         $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
+
 
         return <<<EEE
 <!-- input field -->
@@ -73,8 +79,10 @@ class BootstrapControlsRenderer extends ControlsRenderer
 
     <div class="col-lg-9">
         <input type="$type" name="$name" class="form-control" id="$id"
-               $required placeholder="$placeholder"
-               value="$value">
+                $required
+                $readOnly
+                placeholder="$placeholder"
+                value="$value">
         $help
     </div>
 </div>
@@ -320,7 +328,7 @@ EEE;
 
     }
 
-    
+
     private function renderTokenFieldControl(TokenFieldControlInterface $c)
     {
         $label = $c->getLabel();
@@ -336,12 +344,11 @@ EEE;
         $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
         $sugg = $c->getSuggestions();
         $fSugg = [];
-        foreach($sugg as $v){
+        foreach ($sugg as $v) {
             $fSugg[] = ['value' => $v];
         }
         $fSugg = json_encode($fSugg);
-        
-        
+
 
         return <<<EEE
 <!-- input field -->

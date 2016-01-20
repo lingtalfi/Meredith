@@ -184,6 +184,7 @@ if (isset($_GET['table'])) {
 
                         $requestFields = $lh->getRequestFields();
 
+
                         $stmt .= "select " . implode(', ', $requestFields) . " from $fromClause";
                         $stmt .= $sWhere;
 
@@ -195,8 +196,28 @@ if (isset($_GET['table'])) {
 
                         if (false !== $res = QuickPdo::fetchAll($stmt, $markers)) {
                             $ret['data'] = [];
+                            $r2eIdfs = $lh->getRequestIdentifyingFields();
                             foreach ($res as $k => $row) {
-                                $row = ['DT_RowId' => $row['id']] + $row;
+                                
+                                $idf2Values = [];
+                                foreach($r2eIdfs as $requestIdf => $effectiveIdf){
+                                    if(array_key_exists($requestIdf, $row)){
+                                    	$idf2Values[$effectiveIdf] = $row[$requestIdf];
+                                        unset($row[$requestIdf]);
+                                    }
+                                }
+
+                                $row = [
+                                        'DT_RowId' => $k,
+                                        /**
+                                         * Note: it's important to pass the real idfs, because
+                                         * the displayed idfs might have been changed by a cosmetic change.
+                                         * You need real idfs to access fetch_row and delete_rows services !
+                                         */
+                                        'DT_RowData' => [
+                                            'idf' => $idf2Values,
+                                        ],
+                                    ] + $row;
                                 $ret['data'][$k] = $row;
                             }
                         }
