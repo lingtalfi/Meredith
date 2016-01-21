@@ -58,6 +58,19 @@ interface FormDataProcessorInterface
      * http://stackoverflow.com/questions/25844786/unique-multiple-columns-and-null-in-one-column
      *
      *
+     * 
+     * Another useful case is when you use GUI helpers in such a way that your form controls names are 
+     * not synchronized anymore with your database names.
+     * Then, before you insert data in the database, you need to transpose the GUI form control helpers' names
+     * to actual table names, and the onInsertBefore is a good place to do so.
+     * 
+     * 
+     * The onInsertBefore is also a good place to implement mechanisms against cross site scripting.
+     * Since meredith is a general plugin, it doesn't know the details of your application.
+     * You might have a connected user, and she might only be able to insert/update under certain conditions;
+     * so if this is the case, the onInsertBefore method is a place of choice for doing just that.
+     * 
+     * 
      *
      *
      * @param string $table ,
@@ -65,7 +78,7 @@ interface FormDataProcessorInterface
      * @param $cancelMsg
      * @return void
      */
-    public function onInsertBefore($table, array $values, &$cancelMsg, array $foreignValues);
+    public function onInsertBefore($table, array &$values, &$cancelMsg, array $foreignValues);
 
     /**
      *

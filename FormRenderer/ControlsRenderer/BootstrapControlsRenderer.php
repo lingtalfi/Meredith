@@ -4,6 +4,7 @@ namespace Meredith\FormRenderer\ControlsRenderer;
 
 use Bat\CaseTool;
 use DirScanner\YorgDirScannerTool;
+use Meredith\FormRenderer\ControlsRenderer\Control\AnyTimePickerControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\ColisControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\ControlInterface;
 use Meredith\FormRenderer\ControlsRenderer\Control\InputControlInterface;
@@ -32,6 +33,9 @@ class BootstrapControlsRenderer extends ControlsRenderer
         elseif ($c instanceof ColisControlInterface) {
             return $this->renderColisControl($c);
         }
+        elseif ($c instanceof AnyTimePickerControlInterface) {
+            return $this->renderAnyTimePickerControl($c);
+        }
         elseif ($c instanceof TokenFieldControlInterface) {
             return $this->renderTokenFieldControl($c);
         }
@@ -59,18 +63,12 @@ class BootstrapControlsRenderer extends ControlsRenderer
             $label .= ' <span class="text-danger">*</span>';
             $required = ' required="required"';
         }
-        $readOnly = '';
-        if (true === $c->getIsReadOnly()) {
-            $readOnly = ' readonly="readonly"';
-        }
-
         $type = $c->getType();
         $name = htmlspecialchars($c->getName());
         $id = htmlspecialchars($name);
         $placeholder = htmlspecialchars($c->getPlaceholder());
         $value = htmlspecialchars($c->getValue());
         $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
-
 
         return <<<EEE
 <!-- input field -->
@@ -79,10 +77,8 @@ class BootstrapControlsRenderer extends ControlsRenderer
 
     <div class="col-lg-9">
         <input type="$type" name="$name" class="form-control" id="$id"
-                $required
-                $readOnly
-                placeholder="$placeholder"
-                value="$value">
+               $required placeholder="$placeholder"
+               value="$value">
         $help
     </div>
 </div>
@@ -394,5 +390,47 @@ EEE;
 
     }
 
+    private function renderAnyTimePickerControl(AnyTimePickerControlInterface $c)
+    {
+        $label = $c->getLabel();
+        $required = "";
+        if (true === $c->getIsRequired()) {
+            $label .= ' <span class="text-danger">*</span>';
+            $required = ' required="required"';
+        }
+        $name = htmlspecialchars($c->getName());
+        $id = htmlspecialchars($name);
+        $placeholder = htmlspecialchars($c->getPlaceholder());
+        $value = htmlspecialchars($c->getValue());
+        $help = (null !== $h = $c->getHelp()) ? '<span class="help-block">' . $h . '</span>' : '';
+        $options = json_encode($c->getPickerOptions());
+
+        return <<<EEE
+<!-- input field -->
+<div class="form-group">
+    <label class="control-label col-lg-3">$label</label>
+
+    <div class="col-lg-9">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="icon-calendar3"></i></span>
+            <input name="$name"
+            $required
+            placeholder="$placeholder"
+            type="text" class="form-control" id="$id" value="$value">
+        </div>    
+        $help
+    </div>
+</div>
+<!-- /input field -->
+<script>
+   (function ($) {
+        $(document).ready(function () {
+            $('form #$id').AnyTime_picker($options);
+        });
+    })(jQuery);    
+</script>
+EEE;
+
+    }
 
 }

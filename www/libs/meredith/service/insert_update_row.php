@@ -81,7 +81,9 @@ OpaqueTimServer::create()
                 try {
                     $conn->beginTransaction();
                     if ('update' === $mode) {
-
+                        //------------------------------------------------------------------------------/
+                        // UPDATE
+                        //------------------------------------------------------------------------------/
                         if (is_array($userIdf)) {
 
                             // update
@@ -126,7 +128,9 @@ OpaqueTimServer::create()
                         }
                     }
                     else {
-                        // insert
+                        //------------------------------------------------------------------------------/
+                        // INSERT
+                        //------------------------------------------------------------------------------/
                         if (true === MeredithSupervisor::inst()->isGranted($formId, 'insert')) {
 
                             $cancelMsg = null;

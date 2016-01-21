@@ -196,14 +196,22 @@ if (isset($_GET['table'])) {
 
                         if (false !== $res = QuickPdo::fetchAll($stmt, $markers)) {
                             $ret['data'] = [];
-                            $r2eIdfs = $lh->getRequestIdentifyingFields();
+                            if (null === ($r2eIdfs = $lh->getRequestIdentifyingFields())) {
+                                $r2eIdfs = [];
+                                foreach ($mc->getIdentifyingFields() as $field) {
+                                    $r2eIdfs[$field] = $field;
+                                }
+                            }
+
                             foreach ($res as $k => $row) {
-                                
+
                                 $idf2Values = [];
-                                foreach($r2eIdfs as $requestIdf => $effectiveIdf){
-                                    if(array_key_exists($requestIdf, $row)){
-                                    	$idf2Values[$effectiveIdf] = $row[$requestIdf];
-                                        unset($row[$requestIdf]);
+                                foreach ($r2eIdfs as $requestIdf => $effectiveIdf) {
+                                    if (array_key_exists($requestIdf, $row)) {
+                                        $idf2Values[$effectiveIdf] = $row[$requestIdf];
+//                                        if($effectiveIdf !== $requestIdf){
+//                                        unset($row[$requestIdf]);
+//                                        }
                                     }
                                 }
 

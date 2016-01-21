@@ -46,7 +46,6 @@ class BaseListHandler implements ListHandlerInterface
         $this->notOrderable = [];
         $this->notSearchable = [];
         $this->name2cosmetic = [];
-        $this->requestIdentifyingFields = [];
     }
 
     public static function create()

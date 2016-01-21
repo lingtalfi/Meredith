@@ -28,6 +28,7 @@ Dependencies
 - [lingtalfi/QuickPdo 1.7.0](https://github.com/lingtalfi/QuickPdo)
 - [lingtalfi/Tim 1.6.0](https://github.com/lingtalfi/Tim)
 - [lingtalfi/StringFormatter 1.0.0](https://github.com/lingtalfi/StringFormatter)
+- [lingtalfi/SuspiciousException 1.0.0](https://github.com/lingtalfi/SuspiciousException)
 
 
 
@@ -36,21 +37,28 @@ History Log
 ------------------
 
         
+- 3.1.0 -- 2016-01-21
+        
+    - add AnyTimePickerControlInterface
+    - insert_update_row: onInsertBefore can now update the values to be inserted
+    - insert_update_row: fix bug, incorrect identifying fields
+        
+        
 - 3.0.0 -- 2016-01-20
 
-- design: upgrade to idf (handling of tables with no id column)
-- design: moved getIdentifyingFields and getAutoIncremented to the main controller (and removed from the formDataProcessor)
-- insert_update_row.php: add onSuccessAfter call
-- insert_update_row.php: add onUpdateAfter call
-- insert_update_row.php: now uses transaction
-- insert_update_row.php: fix Opaque server config
-- insert_update_row.php: add getForeignFields method
-- insert_update_row.php: fix log function called twice
-- fetch_row.php: add onFetchAfter
-- meredith.js: meredithColumnDefsFactory.actionMenu, add useUpdate and useDelete options
-- Control: add readOnly attribute
-- services: name services
-- FormDataProcessor:getDefaultErrorMessage, fix: returns a real error message
+    - design: upgrade to idf (handling of tables with no id column)
+    - design: moved getIdentifyingFields and getAutoIncremented to the main controller (and removed from the formDataProcessor)
+    - insert_update_row.php: add onSuccessAfter call
+    - insert_update_row.php: add onUpdateAfter call
+    - insert_update_row.php: now uses transaction
+    - insert_update_row.php: fix Opaque server config
+    - insert_update_row.php: add getForeignFields method
+    - insert_update_row.php: fix log function called twice
+    - fetch_row.php: add onFetchAfter
+    - meredith.js: meredithColumnDefsFactory.actionMenu, add useUpdate and useDelete options
+    - Control: add readOnly attribute
+    - services: name services
+    - FormDataProcessor:getDefaultErrorMessage, fix: returns a real error message
 
 
 

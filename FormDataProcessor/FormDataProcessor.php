@@ -125,10 +125,10 @@ class FormDataProcessor implements FormDataProcessorInterface
     }
 
 
-    public function onInsertBefore($table, array $values, &$cancelMsg, array $foreignValues)
+    public function onInsertBefore($table, array &$values, &$cancelMsg, array $foreignValues)
     {
         if (null !== $this->onInsertBeforeCb) {
-            return call_user_func_array($this->onInsertBeforeCb, [$table, $values, &$cancelMsg, $foreignValues]);
+            return call_user_func_array($this->onInsertBeforeCb, [$table, &$values, &$cancelMsg, $foreignValues]);
         }
     }
 
@@ -182,7 +182,7 @@ class FormDataProcessor implements FormDataProcessorInterface
 
 
     /**
-     * @param callable $cb void function ( $table, array $values, &$cancelMsg, array $foreignValues )
+     * @param callable $cb void function ( $table, array &$values, &$cancelMsg, array $foreignValues )
      * @return $this
      */
     public function setOnInsertBeforeCb(callable $cb)
