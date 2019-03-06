@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\Exception;
+namespace Ling\Meredith\Exception;
 
 /**
  * LingTalfi 2015-12-28

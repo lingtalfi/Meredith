@@ -1,19 +1,19 @@
 <?php
 
-namespace Meredith\FormRenderer\ControlsRenderer;
+namespace Ling\Meredith\FormRenderer\ControlsRenderer;
 
-use Bat\CaseTool;
-use DirScanner\YorgDirScannerTool;
-use Meredith\FormRenderer\ControlsRenderer\Control\AnyTimePickerControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\ColisControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\ControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\InputControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\MonoStatusControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainMasterControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainSlaveControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\TokenFieldControlInterface;
-use Meredith\FormRenderer\ControlsRenderer\Control\UrlWithDropZoneControlInterface;
+use Ling\Bat\CaseTool;
+use Ling\DirScanner\YorgDirScannerTool;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\AnyTimePickerControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\ColisControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\ControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\InputControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\MonoStatusControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainMasterControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectChainSlaveControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\SingleSelectControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\TokenFieldControlInterface;
+use Ling\Meredith\FormRenderer\ControlsRenderer\Control\UrlWithDropZoneControlInterface;
 
 /**
  * LingTalfi 2015-12-31

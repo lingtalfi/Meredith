@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\ListButtonCode;
+namespace Ling\Meredith\ListButtonCode;
 
 /**
  * LingTalfi 2015-12-28

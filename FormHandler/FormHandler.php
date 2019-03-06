@@ -1,13 +1,13 @@
 <?php
 
-namespace Meredith\FormHandler;
+namespace Ling\Meredith\FormHandler;
 
-use Meredith\DynamicConfig\DynamicConfig;
-use Meredith\DynamicConfig\DynamicConfigInterface;
-use Meredith\FormCommunicationHelper\FormCommunicationHelperInterface;
-use Meredith\FormRenderer\FormRendererInterface;
-use Meredith\MainController\MainControllerInterface;
-use Meredith\ValidationCodeHandler\ValidationCodeHandlerInterface;
+use Ling\Meredith\DynamicConfig\DynamicConfig;
+use Ling\Meredith\DynamicConfig\DynamicConfigInterface;
+use Ling\Meredith\FormCommunicationHelper\FormCommunicationHelperInterface;
+use Ling\Meredith\FormRenderer\FormRendererInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\ValidationCodeHandler\ValidationCodeHandlerInterface;
 
 /**
  * LingTalfi 2015-12-29

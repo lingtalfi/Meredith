@@ -1,10 +1,10 @@
 <?php
 
-namespace Meredith\ListHandler;
+namespace Ling\Meredith\ListHandler;
 
-use Meredith\ListButtonCode\ColvisListButtonCode;
-use Meredith\ListButtonCode\DeleteSelectedRowsListButtonCode;
-use Meredith\ListPreConfigScript\AuthorListPreConfigScript;
+use Ling\Meredith\ListButtonCode\ColvisListButtonCode;
+use Ling\Meredith\ListButtonCode\DeleteSelectedRowsListButtonCode;
+use Ling\Meredith\ListPreConfigScript\AuthorListPreConfigScript;
 
 /**
  * LingTalfi 2015-12-28

@@ -1,8 +1,8 @@
 <?php
 
-namespace Meredith\ContentTransformer;
+namespace Ling\Meredith\ContentTransformer;
 
-use Meredith\Tool\MeredithTool;
+use Ling\Meredith\Tool\MeredithTool;
 
 /**
  * LingTalfi 2015-12-29

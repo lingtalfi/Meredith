@@ -1,8 +1,8 @@
 <?php
 
-namespace Meredith\FormRenderer\ControlsRenderer\Control;
+namespace Ling\Meredith\FormRenderer\ControlsRenderer\Control;
 
-use Meredith\Exception\MeredithException;
+use Ling\Meredith\Exception\MeredithException;
 
 /**
  * LingTalfi 2016-01-13

@@ -1,7 +1,7 @@
 <?php
 
-namespace Meredith\FormRenderer;
-use Meredith\MainController\MainControllerInterface;
+namespace Ling\Meredith\FormRenderer;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 /**
  * LingTalfi 2015-12-31

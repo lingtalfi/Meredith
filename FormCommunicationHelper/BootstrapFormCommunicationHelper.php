@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\FormCommunicationHelper;
+namespace Ling\Meredith\FormCommunicationHelper;
 
 /**
  * LingTalfi 2015-12-29

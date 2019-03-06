@@ -1,13 +1,13 @@
 <?php
 
-namespace Meredith\Supervisor;
+namespace Ling\Meredith\Supervisor;
 
 /*
  * LingTalfi 2016-01-02
  */
-use Meredith\Exception\MeredithException;
-use Meredith\FormProcessor\FormProcessorInterface;
-use Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\Exception\MeredithException;
+use Ling\Meredith\FormProcessor\FormProcessorInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 class MeredithSupervisor
 {

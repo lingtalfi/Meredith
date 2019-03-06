@@ -1,12 +1,12 @@
 <?php
 
-namespace Meredith\ListPreConfigScript;
+namespace Ling\Meredith\ListPreConfigScript;
 
 /*
  * LingTalfi 2016-01-05 
  */
-use Meredith\ListButtonCode\ListButtonCodeInterface;
-use Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\ListButtonCode\ListButtonCodeInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 class AuthorListPreConfigScript implements ListPreConfigScriptInterface
 {

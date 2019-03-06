@@ -3,9 +3,9 @@
 require_once __DIR__ . "/../../../../init.php";
 
 
-use Meredith\Exception\MeredithException;
-use Meredith\Supervisor\MeredithSupervisor;
-use QuickPdo\QuickPdo;
+use Ling\Meredith\Exception\MeredithException;
+use Ling\Meredith\Supervisor\MeredithSupervisor;
+use Ling\QuickPdo\QuickPdo;
 
 
 if (isset($_GET['table'])) {

@@ -4,13 +4,13 @@
 require_once __DIR__ . "/../../../../init.php";
 
 
-use Meredith\Exception\MeredithException;
-use Meredith\Supervisor\MeredithSupervisor;
-use QuickPdo\QuickPdo;
-use QuickPdo\QuickPdoStmtTool;
-use StringFormatter\StringFormatterTool;
-use Tim\TimServer\OpaqueTimServer;
-use Tim\TimServer\TimServerInterface;
+use Ling\Meredith\Exception\MeredithException;
+use Ling\Meredith\Supervisor\MeredithSupervisor;
+use Ling\QuickPdo\QuickPdo;
+use Ling\QuickPdo\QuickPdoStmtTool;
+use Ling\StringFormatter\StringFormatterTool;
+use Ling\Tim\TimServer\OpaqueTimServer;
+use Ling\Tim\TimServer\TimServerInterface;
 
 
 OpaqueTimServer::create()

@@ -1,7 +1,7 @@
 <?php
 
-namespace Meredith\OnModalOpenAfter;
-use Meredith\MainController\MainControllerInterface;
+namespace Ling\Meredith\OnModalOpenAfter;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 /**
  * LingTalfi 2015-12-31

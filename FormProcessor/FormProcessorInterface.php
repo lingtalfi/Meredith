@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\FormProcessor;
+namespace Ling\Meredith\FormProcessor;
 
 /*
  * LingTalfi 2015-12-21

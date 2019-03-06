@@ -1,9 +1,9 @@
 <?php
 
-namespace Meredith\DynamicConfig;
+namespace Ling\Meredith\DynamicConfig;
 
-use Meredith\MainController\MainControllerInterface;
-use Meredith\Supervisor\MeredithSupervisor;
+use Ling\Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\Supervisor\MeredithSupervisor;
 
 /**
  * LingTalfi 2015-12-31

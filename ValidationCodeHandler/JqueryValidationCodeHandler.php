@@ -1,9 +1,9 @@
 <?php
 
-namespace Meredith\ValidationCodeHandler;
+namespace Ling\Meredith\ValidationCodeHandler;
 
-use Meredith\MainController\MainControllerInterface;
-use Meredith\ValidatorJsUserCode\ValidatorJsUserCodeInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\ValidatorJsUserCode\ValidatorJsUserCodeInterface;
 
 /**
  * LingTalfi 2015-12-31

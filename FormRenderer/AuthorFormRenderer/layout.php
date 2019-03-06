@@ -1,7 +1,7 @@
 <?php
 
 
-use Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 /**
  * @var MainControllerInterface $mc

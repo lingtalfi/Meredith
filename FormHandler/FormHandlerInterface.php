@@ -1,12 +1,12 @@
 <?php
 
-namespace Meredith\FormHandler;
+namespace Ling\Meredith\FormHandler;
 
-use Meredith\FormAndValidationLayout\FormAndValidationLayoutInterface;
-use Meredith\FormMessageJsHelper\FormMessageJsHelperInterface;
-use Meredith\MainController\MainControllerInterface;
-use Meredith\ValidatorJsSubmitHandler\ValidatorJsSubmitHandlerInterface;
-use Meredith\ValidatorJsUserCode\ValidatorJsUserCodeInterface;
+use Ling\Meredith\FormAndValidationLayout\FormAndValidationLayoutInterface;
+use Ling\Meredith\FormMessageJsHelper\FormMessageJsHelperInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\ValidatorJsSubmitHandler\ValidatorJsSubmitHandlerInterface;
+use Ling\Meredith\ValidatorJsUserCode\ValidatorJsUserCodeInterface;
 
 /**
  * LingTalfi 2015-12-29

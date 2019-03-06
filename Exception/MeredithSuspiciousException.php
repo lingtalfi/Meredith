@@ -1,8 +1,8 @@
 <?php
 
-namespace Meredith\Exception;
+namespace Ling\Meredith\Exception;
 
-use SuspiciousException\SuspiciousExceptionInterface;
+use Ling\SuspiciousException\SuspiciousExceptionInterface;
 
 /**
  * LingTalfi 2015-12-28

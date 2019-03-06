@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\FormRenderer\ControlsRenderer\Control;
+namespace Ling\Meredith\FormRenderer\ControlsRenderer\Control;
 
 /**
  * LingTalfi 2015-12-31

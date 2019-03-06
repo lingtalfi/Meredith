@@ -1,8 +1,8 @@
 <?php
 
-namespace Meredith\FormHandler;
+namespace Ling\Meredith\FormHandler;
 
-use Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 
 /**

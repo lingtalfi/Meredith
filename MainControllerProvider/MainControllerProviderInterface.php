@@ -1,11 +1,11 @@
 <?php
 
-namespace Meredith\MainControllerProvider;
+namespace Ling\Meredith\MainControllerProvider;
 
 /*
  * LingTalfi 2016-01-01
  */
-use Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
 
 interface MainControllerProviderInterface
 {

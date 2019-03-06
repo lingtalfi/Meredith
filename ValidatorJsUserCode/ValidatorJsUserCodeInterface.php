@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\ValidatorJsUserCode;
+namespace Ling\Meredith\ValidatorJsUserCode;
 
 /**
  * LingTalfi 2015-12-29

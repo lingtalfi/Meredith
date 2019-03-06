@@ -6,7 +6,7 @@
             /**
             * @var ListButtonCodeInterface[] $buttons
             */
-            use Meredith\ListButtonCode\ListButtonCodeInterface;
+            use Ling\Meredith\ListButtonCode\ListButtonCodeInterface;
             
             
             $c = 0;

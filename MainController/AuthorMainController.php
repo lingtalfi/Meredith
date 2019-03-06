@@ -1,8 +1,8 @@
 <?php
 
-namespace Meredith\MainController;
+namespace Ling\Meredith\MainController;
 
-use Meredith\ListHandler\AuthorListHandler;
+use Ling\Meredith\ListHandler\AuthorListHandler;
 
 /**
  * LingTalfi 2015-12-28

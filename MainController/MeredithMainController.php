@@ -1,15 +1,15 @@
 <?php
 
-namespace Meredith\MainController;
+namespace Ling\Meredith\MainController;
 
-use Meredith\Column2LabelAdaptor\Column2LabelAdaptorInterface;
-use Meredith\Exception\MeredithException;
-use Meredith\ActionColumn\ActionColumnInterface;
-use Meredith\FormDataProcessor\FormDataProcessorInterface;
-use Meredith\FormHandler\FormHandlerInterface;
-use Meredith\ListHandler\ListHandlerInterface;
-use Meredith\OnFormReady\OnFormReadyInterface;
-use Meredith\TableColumns\TableColumnsFactoryInterface;
+use Ling\Meredith\Column2LabelAdaptor\Column2LabelAdaptorInterface;
+use Ling\Meredith\Exception\MeredithException;
+use Ling\Meredith\ActionColumn\ActionColumnInterface;
+use Ling\Meredith\FormDataProcessor\FormDataProcessorInterface;
+use Ling\Meredith\FormHandler\FormHandlerInterface;
+use Ling\Meredith\ListHandler\ListHandlerInterface;
+use Ling\Meredith\OnFormReady\OnFormReadyInterface;
+use Ling\Meredith\TableColumns\TableColumnsFactoryInterface;
 
 /**
  * LingTalfi 2015-12-28

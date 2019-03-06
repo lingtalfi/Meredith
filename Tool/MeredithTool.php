@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\Tool;
+namespace Ling\Meredith\Tool;
 
 /**
  * LingTalfi 2015-12-29

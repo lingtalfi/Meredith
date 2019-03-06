@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\Dictionary;
+namespace Ling\Meredith\Dictionary;
 
 /*
  * LingTalfi 2016-01-02

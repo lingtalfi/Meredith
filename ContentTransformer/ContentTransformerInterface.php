@@ -1,6 +1,6 @@
 <?php
 
-namespace Meredith\ContentTransformer;
+namespace Ling\Meredith\ContentTransformer;
 
 /**
  * LingTalfi 2015-12-29

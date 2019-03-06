@@ -3,7 +3,7 @@
 /**
  * @var JqueryValidationCodeHandler $this
  */
-use Meredith\ValidationCodeHandler\JqueryValidationCodeHandler;
+use Ling\Meredith\ValidationCodeHandler\JqueryValidationCodeHandler;
 
 ?>
 <script>

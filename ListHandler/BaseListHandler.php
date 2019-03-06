@@ -1,13 +1,13 @@
 <?php
 
-namespace Meredith\ListHandler;
+namespace Ling\Meredith\ListHandler;
 
-use Bat\CaseTool;
-use Meredith\ContentTransformer\ContentTransformerInterface;
-use Meredith\Exception\MeredithException;
-use Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
-use Meredith\MainController\MainControllerInterface;
-use Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
+use Ling\Bat\CaseTool;
+use Ling\Meredith\ContentTransformer\ContentTransformerInterface;
+use Ling\Meredith\Exception\MeredithException;
+use Ling\Meredith\ListPreConfigScript\ListPreConfigScriptInterface;
+use Ling\Meredith\MainController\MainControllerInterface;
+use Ling\Meredith\OnModalOpenAfter\OnModalOpenAfterInterface;
 
 /**
  * LingTalfi 2015-12-28
