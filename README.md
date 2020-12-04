@@ -49,7 +49,11 @@ Dependencies
 History Log
 ------------------
 
-        
+
+- 3.1.1 -- 2020-12-04
+
+    - Add lpi-deps.byml file
+
 - 3.1.0 -- 2016-01-21
         
     - add AnyTimePickerControlInterface
